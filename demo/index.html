@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>WebGPU Lock-Free Queue</title>
+    <style>
+      body {
+        margin: 0;
+        padding: 24px;
+        font-family: "Iowan Old Style", "Palatino Linotype", "Book Antiqua", Palatino, serif;
+        background: radial-gradient(circle at 20% 10%, #f4f0e8, #e2ddd3 55%, #cfc8bd);
+        color: #1f1b16;
+      }
+      h1 {
+        margin: 0 0 12px;
+        font-size: 28px;
+        letter-spacing: 0.02em;
+      }
+      p {
+        margin: 0 0 16px;
+        max-width: 720px;
+      }
+      pre {
+        background: #14110f;
+        color: #f6f0e8;
+        padding: 16px;
+        border-radius: 12px;
+        font-size: 14px;
+        line-height: 1.4;
+        overflow-x: auto;
+        box-shadow: 0 12px 32px rgba(0, 0, 0, 0.2);
+      }
+      canvas {
+        display: block;
+        margin-top: 16px;
+        border-radius: 12px;
+        border: 1px solid #d3c8ba;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+      }
+      .panel {
+        display: inline-block;
+        padding: 12px 18px;
+        background: #fdfaf4;
+        border: 1px solid #d3c8ba;
+        border-radius: 14px;
+        box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="panel">
+      <h1>WebGPU Lock-Free Queue</h1>
+      <p>Queue demo + random noise FFT spectrogram.</p>
+      <pre id="log">Booting…</pre>
+      <canvas id="spectrogram" width="768" height="320"></canvas>
+    </div>
+    <script type="module" src="./main.js"></script>
+  </body>
+</html>

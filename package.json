@@ -1,0 +1,50 @@
+{
+  "name": "@plasius/gpu-lock-free-queue",
+  "version": "0.1.0",
+  "description": "WebGPU lock-free MPMC ring queue with sequence counters.",
+  "type": "module",
+  "sideEffects": false,
+  "private": false,
+  "files": [
+    "src",
+    "README.md",
+    "CHANGELOG.md",
+    "LICENSE",
+    "legal"
+  ],
+  "exports": {
+    ".": "./src/index.js",
+    "./queue.wgsl": "./src/queue.wgsl",
+    "./package.json": "./package.json"
+  },
+  "scripts": {
+    "demo": "python3 -m http.server"
+  },
+  "keywords": [
+    "webgpu",
+    "lock-free",
+    "mpmc",
+    "queue",
+    "ring-buffer",
+    "sequence-counter",
+    "gpu",
+    "compute",
+    "concurrency",
+    "plasius"
+  ],
+  "author": "Plasius LTD <development@plasius.co.uk>",
+  "license": "Apache-2.0",
+  "publishConfig": {
+    "access": "public"
+  },
+  "funding": [
+    {
+      "type": "patreon",
+      "url": "https://www.patreon.com/c/plasiusltd/membership"
+    },
+    {
+      "type": "github",
+      "url": "https://github.com/sponsors/Plasius-LTD"
+    }
+  ]
+}
