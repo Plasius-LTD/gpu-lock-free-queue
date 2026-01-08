@@ -1,5 +1,9 @@
 # @plasius/gpu-lock-free-queue
 
+[![npm version](https://img.shields.io/npm/v/@plasius/gpu-lock-free-queue)](https://www.npmjs.com/package/@plasius/gpu-lock-free-queue)
+[![CI](https://github.com/Plasius-LTD/gpu-lock-free-queue/actions/workflows/ci.yml/badge.svg)](https://github.com/Plasius-LTD/gpu-lock-free-queue/actions/workflows/ci.yml)
+[![license](https://img.shields.io/npm/l/@plasius/gpu-lock-free-queue)](./LICENSE)
+
 A minimal WebGPU lock-free MPMC ring queue using a per-slot sequence counter (Vyukov-style). This is a starter implementation focused on correctness, robustness, and low overhead.
 
 ## Install
@@ -34,6 +38,13 @@ python3 -m http.server
 ```
 
 Then open `http://localhost:8000` and check the console/output.
+
+## Tests
+```
+npm run test:unit
+npm run test:coverage
+npm run test:e2e
+```
 
 ## Files
 - `demo/index.html`: Loads the demo.
