@@ -34,6 +34,14 @@
   ],
   "author": "Plasius LTD <development@plasius.co.uk>",
   "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Plasius-LTD/gpu-lock-free-queue.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Plasius-LTD/gpu-lock-free-queue/issues"
+  },
+  "homepage": "https://github.com/Plasius-LTD/gpu-lock-free-queue#readme",
   "publishConfig": {
     "access": "public"
   },
