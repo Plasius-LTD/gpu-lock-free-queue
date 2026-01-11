@@ -9,16 +9,18 @@ The format is based on **[Keep a Changelog](https://keepachangelog.com/en/1.1.0/
 ## [Unreleased]
 
 - **Added**
-  - (placeholder)
+  - Deterministic demo test pattern mode for stable image hashing in e2e tests.
+  - Loader and WGSL guard tests, plus an e2e WGSL compilation check.
 
 - **Changed**
-  - (placeholder)
+  - `loadQueueWgsl` accepts `url`/`fetcher` overrides and falls back to filesystem reads for `file:` URLs.
 
 - **Fixed**
-  - (placeholder)
+  - WGSL entry points now validate queue configuration and clamp job counts to buffer lengths.
+  - WGSL load errors now surface with explicit HTTP status details.
 
 - **Security**
-  - (placeholder)
+  - None.
 
 ## [0.1.2-beta.0] - 2026-01-08
 

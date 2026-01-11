@@ -41,3 +41,20 @@ test("queue WGSL includes retry budget constant", () => {
   const wgsl = fs.readFileSync(wgslPath, "utf8");
   assert.ok(/const\s+MAX_RETRIES\s*:\s*u32\s*=/.test(wgsl));
 });
+
+test("queue WGSL validates queue configuration", () => {
+  const wgsl = fs.readFileSync(wgslPath, "utf8");
+  assert.ok(wgsl.includes("fn queue_config_valid"));
+  assert.ok(wgsl.includes("arrayLength(&slots)"));
+  assert.match(wgsl, /queue\.capacity\s*&\s*\(queue\.capacity\s*-\s*1u\)/);
+  assert.match(wgsl, /queue\.mask\s*!=\s*queue\.capacity\s*-\s*1u/);
+});
+
+test("queue WGSL bounds job count to buffer lengths", () => {
+  const wgsl = fs.readFileSync(wgslPath, "utf8");
+  assert.ok(wgsl.includes("fn enqueue_job_count"));
+  assert.ok(wgsl.includes("fn dequeue_job_count"));
+  assert.ok(wgsl.includes("arrayLength(&input_jobs)"));
+  assert.ok(wgsl.includes("arrayLength(&output_jobs)"));
+  assert.ok(wgsl.includes("arrayLength(&status)"));
+});

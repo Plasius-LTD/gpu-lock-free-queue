@@ -26,6 +26,32 @@ struct Params {
 
 const MAX_RETRIES: u32 = 512u;
 
+fn queue_config_valid() -> bool {
+  if (queue.capacity == 0u) {
+    return false;
+  }
+  if ((queue.capacity & (queue.capacity - 1u)) != 0u) {
+    return false;
+  }
+  if (queue.mask != queue.capacity - 1u) {
+    return false;
+  }
+  if (queue.capacity > arrayLength(&slots)) {
+    return false;
+  }
+  return true;
+}
+
+fn enqueue_job_count() -> u32 {
+  let count = min(params.job_count, arrayLength(&input_jobs));
+  return min(count, arrayLength(&status));
+}
+
+fn dequeue_job_count() -> u32 {
+  let count = min(params.job_count, arrayLength(&output_jobs));
+  return min(count, arrayLength(&status));
+}
+
 fn enqueue(val: u32) -> u32 {
   for (var attempt: u32 = 0u; attempt < MAX_RETRIES; attempt++) {
     let t = atomicLoad(&queue.tail);
@@ -74,7 +100,11 @@ fn dequeue(idx: u32) -> u32 {
 @compute @workgroup_size(64)
 fn enqueue_main(@builtin(global_invocation_id) gid: vec3<u32>) {
   let idx = gid.x;
-  if (idx >= params.job_count) {
+  let job_count = enqueue_job_count();
+  if (idx >= job_count) {
+    return;
+  }
+  if (!queue_config_valid()) {
     return;
   }
   if (status[idx] == 1u) {
@@ -90,7 +120,11 @@ fn enqueue_main(@builtin(global_invocation_id) gid: vec3<u32>) {
 @compute @workgroup_size(64)
 fn dequeue_main(@builtin(global_invocation_id) gid: vec3<u32>) {
   let idx = gid.x;
-  if (idx >= params.job_count) {
+  let job_count = dequeue_job_count();
+  if (idx >= job_count) {
+    return;
+  }
+  if (!queue_config_valid()) {
     return;
   }
   if (status[idx] == 1u) {

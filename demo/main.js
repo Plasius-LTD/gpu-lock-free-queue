@@ -1,6 +1,8 @@
 const logEl = document.getElementById("log");
 const canvas = document.getElementById("spectrogram");
 const ctx = canvas.getContext("2d");
+const searchParams = new URLSearchParams(window.location.search);
+const testMode = searchParams.get("mode") === "pattern";
 
 function logLine(line) {
   logEl.textContent += `${line}\n`;
@@ -132,6 +134,39 @@ function colorMap(v) {
   return [r, g, b];
 }
 
+function getTestSeed() {
+  const seedParam = Number.parseInt(searchParams.get("seed") ?? "23", 10);
+  if (!Number.isFinite(seedParam)) {
+    return 23;
+  }
+  return seedParam & 255;
+}
+
+function renderTestPattern(seed) {
+  const width = canvas.width;
+  const height = canvas.height;
+  const img = ctx.createImageData(width, height);
+  const data = img.data;
+
+  for (let y = 0; y < height; y += 1) {
+    for (let x = 0; x < width; x += 1) {
+      const value =
+        (x * (seed + 7) + y * (seed + 13) + ((x ^ y) * (seed + 3))) & 255;
+      const t = value / 255;
+      const color = colorMap(t);
+      const idx = (y * width + x) * 4;
+      data[idx] = color[0];
+      data[idx + 1] = color[1];
+      data[idx + 2] = color[2];
+      data[idx + 3] = 255;
+    }
+  }
+
+  ctx.putImageData(img, 0, 0);
+  logLine(`Deterministic test image ready (seed ${seed}).`);
+  window.__testImageReady = true;
+}
+
 function analyzeRandomness(samples, spectrumAvg) {
   const n = samples.length;
   let mean = 0;
@@ -183,6 +218,10 @@ function analyzeRandomness(samples, spectrumAvg) {
 }
 
 async function init() {
+  if (testMode) {
+    renderTestPattern(getTestSeed());
+    return;
+  }
   if (!navigator.gpu) {
     logLine("WebGPU not available in this browser.");
     return;
