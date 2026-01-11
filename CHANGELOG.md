@@ -22,20 +22,6 @@ The format is based on **[Keep a Changelog](https://keepachangelog.com/en/1.1.0/
 - **Security**
   - None.
 
-## [0.1.2-beta.0] - 2026-01-08
-
-- **Added**
-  - (placeholder)
-
-- **Changed**
-  - (placeholder)
-
-- **Fixed**
-  - (placeholder)
-
-- **Security**
-  - (placeholder)
-
 ## [0.1.1-beta.1] - 2026-01-08
 
 - **Added**
@@ -71,4 +57,3 @@ The format is based on **[Keep a Changelog](https://keepachangelog.com/en/1.1.0/
   - Demo for enqueue/dequeue, FFT spectrogram, and randomness heuristics.
 [0.1.1-beta.0]: https://github.com/Plasius-LTD/gpu-lock-free-queue/releases/tag/v0.1.1-beta.0
 [0.1.1-beta.1]: https://github.com/Plasius-LTD/gpu-lock-free-queue/releases/tag/v0.1.1-beta.1
-[0.1.2-beta.0]: https://github.com/Plasius-LTD/gpu-lock-free-queue/releases/tag/v0.1.2-beta.0
