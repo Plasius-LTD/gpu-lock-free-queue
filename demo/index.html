@@ -31,9 +31,46 @@
         overflow-x: auto;
         box-shadow: 0 12px 32px rgba(0, 0, 0, 0.2);
       }
+      .stats {
+        margin-top: 12px;
+        display: inline-flex;
+        gap: 12px;
+        align-items: center;
+        padding: 6px 12px;
+        border-radius: 999px;
+        background: rgba(253, 250, 244, 0.9);
+        border: 1px solid #d3c8ba;
+        font-size: 12px;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+      .stats strong {
+        font-size: 14px;
+        letter-spacing: 0.04em;
+      }
+      .spectrogram-grid {
+        margin-top: 16px;
+        display: grid;
+        gap: 12px;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      }
+      .spectrogram-card {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+      }
+      .spectrogram-meta {
+        display: flex;
+        justify-content: space-between;
+        font-size: 12px;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: #5a5147;
+      }
       canvas {
         display: block;
-        margin-top: 16px;
+        width: 100%;
+        height: auto;
         border-radius: 12px;
         border: 1px solid #d3c8ba;
         box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
@@ -51,9 +88,126 @@
   <body>
     <div class="panel">
       <h1>WebGPU Lock-Free Queue</h1>
-      <p>Queue demo + random noise FFT spectrogram.</p>
+      <p>Queue demo + interleaved static frames.</p>
       <pre id="log">Booting…</pre>
-      <canvas id="spectrogram" width="768" height="320"></canvas>
+      <div class="stats">
+        <span>FPS</span>
+        <strong id="fps">--</strong>
+      </div>
+      <div class="spectrogram-grid" id="spectrogram-grid">
+        <div class="spectrogram-card">
+          <div class="spectrogram-meta">
+            <span>Image 1</span>
+            <span class="spectrogram-progress" data-index="0">0 frames</span>
+          </div>
+          <canvas id="spectrogram" class="spectrogram" width="256" height="128" data-index="0"></canvas>
+        </div>
+        <div class="spectrogram-card">
+          <div class="spectrogram-meta">
+            <span>Image 2</span>
+            <span class="spectrogram-progress" data-index="1">0 frames</span>
+          </div>
+          <canvas class="spectrogram" width="256" height="128" data-index="1"></canvas>
+        </div>
+        <div class="spectrogram-card">
+          <div class="spectrogram-meta">
+            <span>Image 3</span>
+            <span class="spectrogram-progress" data-index="2">0 frames</span>
+          </div>
+          <canvas class="spectrogram" width="256" height="128" data-index="2"></canvas>
+        </div>
+        <div class="spectrogram-card">
+          <div class="spectrogram-meta">
+            <span>Image 4</span>
+            <span class="spectrogram-progress" data-index="3">0 frames</span>
+          </div>
+          <canvas class="spectrogram" width="256" height="128" data-index="3"></canvas>
+        </div>
+        <div class="spectrogram-card">
+          <div class="spectrogram-meta">
+            <span>Image 5</span>
+            <span class="spectrogram-progress" data-index="4">0 frames</span>
+          </div>
+          <canvas class="spectrogram" width="256" height="128" data-index="4"></canvas>
+        </div>
+        <div class="spectrogram-card">
+          <div class="spectrogram-meta">
+            <span>Image 6</span>
+            <span class="spectrogram-progress" data-index="5">0 frames</span>
+          </div>
+          <canvas class="spectrogram" width="256" height="128" data-index="5"></canvas>
+        </div>
+        <div class="spectrogram-card">
+          <div class="spectrogram-meta">
+            <span>Image 7</span>
+            <span class="spectrogram-progress" data-index="6">0 frames</span>
+          </div>
+          <canvas class="spectrogram" width="256" height="128" data-index="6"></canvas>
+        </div>
+        <div class="spectrogram-card">
+          <div class="spectrogram-meta">
+            <span>Image 8</span>
+            <span class="spectrogram-progress" data-index="7">0 frames</span>
+          </div>
+          <canvas class="spectrogram" width="256" height="128" data-index="7"></canvas>
+        </div>
+        <div class="spectrogram-card">
+          <div class="spectrogram-meta">
+            <span>Image 9</span>
+            <span class="spectrogram-progress" data-index="8">0 frames</span>
+          </div>
+          <canvas class="spectrogram" width="256" height="128" data-index="8"></canvas>
+        </div>
+        <div class="spectrogram-card">
+          <div class="spectrogram-meta">
+            <span>Image 10</span>
+            <span class="spectrogram-progress" data-index="9">0 frames</span>
+          </div>
+          <canvas class="spectrogram" width="256" height="128" data-index="9"></canvas>
+        </div>
+        <div class="spectrogram-card">
+          <div class="spectrogram-meta">
+            <span>Image 11</span>
+            <span class="spectrogram-progress" data-index="10">0 frames</span>
+          </div>
+          <canvas class="spectrogram" width="256" height="128" data-index="10"></canvas>
+        </div>
+        <div class="spectrogram-card">
+          <div class="spectrogram-meta">
+            <span>Image 12</span>
+            <span class="spectrogram-progress" data-index="11">0 frames</span>
+          </div>
+          <canvas class="spectrogram" width="256" height="128" data-index="11"></canvas>
+        </div>
+        <div class="spectrogram-card">
+          <div class="spectrogram-meta">
+            <span>Image 13</span>
+            <span class="spectrogram-progress" data-index="12">0 frames</span>
+          </div>
+          <canvas class="spectrogram" width="256" height="128" data-index="12"></canvas>
+        </div>
+        <div class="spectrogram-card">
+          <div class="spectrogram-meta">
+            <span>Image 14</span>
+            <span class="spectrogram-progress" data-index="13">0 frames</span>
+          </div>
+          <canvas class="spectrogram" width="256" height="128" data-index="13"></canvas>
+        </div>
+        <div class="spectrogram-card">
+          <div class="spectrogram-meta">
+            <span>Image 15</span>
+            <span class="spectrogram-progress" data-index="14">0 frames</span>
+          </div>
+          <canvas class="spectrogram" width="256" height="128" data-index="14"></canvas>
+        </div>
+        <div class="spectrogram-card">
+          <div class="spectrogram-meta">
+            <span>Image 16</span>
+            <span class="spectrogram-progress" data-index="15">0 frames</span>
+          </div>
+          <canvas class="spectrogram" width="256" height="128" data-index="15"></canvas>
+        </div>
+      </div>
     </div>
     <script type="module" src="./main.js"></script>
   </body>

@@ -8,7 +8,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const projectRoot = path.resolve(__dirname, "..");
 const testPatternSeed = 23;
-const testPatternHash = "a6d54f1d";
+const testPatternHash = "93c113f5";
 
 function createStaticServer(rootDir) {
   return http.createServer((req, res) => {
@@ -85,23 +85,32 @@ test.describe("demo", () => {
     expect(logText).toMatch(/WebGPU not available|Enqueued: \d+ \/ \d+/);
   });
 
-  test("demo renders deterministic test image", async ({ page }) => {
+  test("demo renders deterministic test images", async ({ page }) => {
     await page.goto(`${baseUrl}/demo/index.html?mode=pattern&seed=${testPatternSeed}`);
     await page.waitForFunction(() => window.__testImageReady === true);
 
-    const hash = await page.evaluate(() => {
-      const canvas = document.getElementById("spectrogram");
-      const ctx = canvas.getContext("2d");
-      const data = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
+    const result = await page.evaluate(() => {
+      const canvases = Array.from(document.querySelectorAll(".spectrogram"));
       let h = 0x811c9dc5;
-      for (let i = 0; i < data.length; i += 1) {
-        h ^= data[i];
-        h = Math.imul(h, 0x01000193);
+      for (const canvas of canvases) {
+        const ctx = canvas.getContext("2d");
+        if (!ctx) {
+          continue;
+        }
+        const data = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
+        for (let i = 0; i < data.length; i += 1) {
+          h ^= data[i];
+          h = Math.imul(h, 0x01000193);
+        }
       }
-      return (h >>> 0).toString(16).padStart(8, "0");
+      return {
+        count: canvases.length,
+        hash: (h >>> 0).toString(16).padStart(8, "0"),
+      };
     });
 
-    expect(hash).toBe(testPatternHash);
+    expect(result.count).toBe(16);
+    expect(result.hash).toBe(testPatternHash);
   });
 
   test("WGSL compiles when WebGPU is available", async ({ page }) => {
@@ -132,9 +141,11 @@ test.describe("demo", () => {
     expect(result.errors).toEqual([]);
   });
 
-  test("demo renders spectrogram canvas", async ({ page }) => {
+  test("demo renders spectrogram canvases", async ({ page }) => {
     await page.goto(`${baseUrl}/demo/index.html`);
-    const canvas = page.locator("#spectrogram");
+    const canvases = page.locator(".spectrogram");
+    await expect(canvases).toHaveCount(16);
+    const canvas = canvases.first();
     await expect(canvas).toBeVisible();
 
     const size = await canvas.evaluate((el) => ({

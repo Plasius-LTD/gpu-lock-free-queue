@@ -10,10 +10,15 @@ The format is based on **[Keep a Changelog](https://keepachangelog.com/en/1.1.0/
 
 - **Added**
   - Deterministic demo test pattern mode for stable image hashing in e2e tests.
+  - 4x4 demo grid for multi-canvas output.
+  - Timestamped demo logging.
+  - Demo FPS counter and per-image progress indicators.
   - Loader and WGSL guard tests, plus an e2e WGSL compilation check.
 
 - **Changed**
   - `loadQueueWgsl` accepts `url`/`fetcher` overrides and falls back to filesystem reads for `file:` URLs.
+  - Demo renders 500 interleaved static frames using per-image queues per frame.
+  - Demo updates canvases line-by-line for progressive static output.
 
 - **Fixed**
   - WGSL entry points now validate queue configuration and clamp job counts to buffer lengths.
@@ -21,20 +26,6 @@ The format is based on **[Keep a Changelog](https://keepachangelog.com/en/1.1.0/
 
 - **Security**
   - None.
-
-## [0.1.1-beta.1] - 2026-01-08
-
-- **Added**
-  - (placeholder)
-
-- **Changed**
-  - (placeholder)
-
-- **Fixed**
-  - (placeholder)
-
-- **Security**
-  - (placeholder)
 
 ## [0.1.1-beta.0] - 2026-01-08
 

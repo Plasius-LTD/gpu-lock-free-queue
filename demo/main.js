@@ -1,11 +1,81 @@
 const logEl = document.getElementById("log");
-const canvas = document.getElementById("spectrogram");
-const ctx = canvas.getContext("2d");
+const fpsEl = document.getElementById("fps");
+const spectrogramCanvases = Array.from(document.querySelectorAll(".spectrogram"));
+const progressLabels = Array.from(document.querySelectorAll(".spectrogram-progress"));
 const searchParams = new URLSearchParams(window.location.search);
 const testMode = searchParams.get("mode") === "pattern";
+const totalFrames = 500;
+const renderContinuously = true;
+const lineStride = 37;
+const lineOffset = 11;
+const progressByIndex = new Map();
+
+for (const label of progressLabels) {
+  const index = Number.parseInt(label.dataset.index ?? "", 10);
+  if (Number.isFinite(index)) {
+    progressByIndex.set(index, label);
+  }
+}
+
+function formatFrameCount(value) {
+  const count = Math.max(0, Math.floor(value));
+  return `${count} frame${count === 1 ? "" : "s"}`;
+}
+
+function setProgress(index, value) {
+  const label = progressByIndex.get(index);
+  if (!label) {
+    return;
+  }
+  if (renderContinuously) {
+    label.textContent = formatFrameCount(value);
+    return;
+  }
+  const clamped = Math.max(0, Math.min(1, value));
+  const frameCount = Math.round(clamped * totalFrames);
+  label.textContent = `${frameCount}/${totalFrames}`;
+}
+
+function startFpsCounter() {
+  if (!fpsEl || typeof requestAnimationFrame === "undefined") {
+    return;
+  }
+  let frames = 0;
+  let lastReport = performance.now();
+
+  const tick = (now) => {
+    frames += 1;
+    const elapsed = now - lastReport;
+    if (elapsed >= 500) {
+      const fps = (frames * 1000) / elapsed;
+      fpsEl.textContent = fps.toFixed(1);
+      frames = 0;
+      lastReport = now;
+    }
+    requestAnimationFrame(tick);
+  };
+
+  requestAnimationFrame(tick);
+}
+
+function formatTimestamp(date) {
+  const hours = String(date.getHours()).padStart(2, "0");
+  const minutes = String(date.getMinutes()).padStart(2, "0");
+  const seconds = String(date.getSeconds()).padStart(2, "0");
+  return `${hours}:${minutes}:${seconds}`;
+}
 
 function logLine(line) {
-  logEl.textContent += `${line}\n`;
+  const stamp = formatTimestamp(new Date());
+  logEl.textContent += `[${stamp}] ${line}\n`;
+}
+
+function getLineIndex(frame, imageIndex, lineCount) {
+  return (frame * lineStride + imageIndex * lineOffset) % lineCount;
+}
+
+if (spectrogramCanvases.length === 0) {
+  throw new Error("No spectrogram canvases found.");
 }
 
 function fillRandomU32(target) {
@@ -21,6 +91,19 @@ function fillRandomU32(target) {
       target[i] = Math.floor(Math.random() * 0xffffffff);
     }
   }
+}
+
+function seedLineBuffer(target, seed) {
+  const base = seed >>> 0;
+  for (let i = 0; i < target.length; i += 1) {
+    target[i] = (target[i] ^ (base + i)) >>> 0;
+  }
+}
+
+function getFrameSeed(frameIndex, imageIndex) {
+  const imageSalt = Math.imul(imageIndex + 1, 0x9e3779b1);
+  const frameSalt = Math.imul(frameIndex + 1, 0x85ebca6b);
+  return (imageSalt ^ frameSalt) >>> 0;
 }
 
 function u32ToFloat01(value) {
@@ -102,28 +185,24 @@ function makeSpectrogram(samples, windowSize, hop) {
   return { spec, frames, bins, maxMag };
 }
 
-function drawSpectrogram(spec, frames, bins, maxMag) {
-  const width = canvas.width;
-  const height = canvas.height;
-  ctx.clearRect(0, 0, width, height);
-  const img = ctx.createImageData(width, height);
-  const data = img.data;
-
-  for (let x = 0; x < width; x += 1) {
-    const frame = Math.floor((x / width) * frames);
-    for (let y = 0; y < height; y += 1) {
-      const bin = Math.floor(((height - 1 - y) / height) * bins);
-      const value = spec[frame * bins + bin] / (maxMag || 1);
-      const color = colorMap(value);
-      const idx = (y * width + x) * 4;
-      data[idx] = color[0];
-      data[idx + 1] = color[1];
-      data[idx + 2] = color[2];
-      data[idx + 3] = 255;
-    }
+function drawStaticLine(targetCanvas, lineIndex, output, status, fallback) {
+  const ctx = targetCanvas.getContext("2d");
+  if (!ctx) {
+    return;
   }
-
-  ctx.putImageData(img, 0, 0);
+  const width = targetCanvas.width;
+  const img = ctx.createImageData(width, 1);
+  const data = img.data;
+  for (let x = 0; x < width; x += 1) {
+    const value = status[x] === 1 ? output[x] : fallback[x];
+    const color = colorMap(u32ToFloat01(value));
+    const idx = x * 4;
+    data[idx] = color[0];
+    data[idx + 1] = color[1];
+    data[idx + 2] = color[2];
+    data[idx + 3] = 255;
+  }
+  ctx.putImageData(img, 0, lineIndex);
 }
 
 function colorMap(v) {
@@ -142,9 +221,13 @@ function getTestSeed() {
   return seedParam & 255;
 }
 
-function renderTestPattern(seed) {
-  const width = canvas.width;
-  const height = canvas.height;
+function renderTestPattern(targetCanvas, seed) {
+  const ctx = targetCanvas.getContext("2d");
+  if (!ctx) {
+    return;
+  }
+  const width = targetCanvas.width;
+  const height = targetCanvas.height;
   const img = ctx.createImageData(width, height);
   const data = img.data;
 
@@ -163,7 +246,14 @@ function renderTestPattern(seed) {
   }
 
   ctx.putImageData(img, 0, 0);
-  logLine(`Deterministic test image ready (seed ${seed}).`);
+}
+
+function renderTestPatterns(seed) {
+  spectrogramCanvases.forEach((targetCanvas, index) => {
+    renderTestPattern(targetCanvas, (seed + index) & 255);
+    setProgress(index, 1);
+  });
+  logLine(`Deterministic test images ready (seed ${seed}).`);
   window.__testImageReady = true;
 }
 
@@ -218,8 +308,9 @@ function analyzeRandomness(samples, spectrumAvg) {
 }
 
 async function init() {
+  startFpsCounter();
   if (testMode) {
-    renderTestPattern(getTestSeed());
+    renderTestPatterns(getTestSeed());
     return;
   }
   if (!navigator.gpu) {
@@ -265,51 +356,31 @@ async function init() {
     compute: { module, entryPoint: "dequeue_main" },
   });
 
-  const capacity = 131072;
+  const imageCount = spectrogramCanvases.length;
+  const lineWidth = spectrogramCanvases[0].width;
+  const lineCount = spectrogramCanvases[0].height;
+  const jobsPerImage = lineWidth;
+  const jobCount = jobsPerImage;
+  const totalJobs = renderContinuously ? null : jobsPerImage * imageCount * totalFrames;
+  const capacity = jobCount;
   const mask = capacity - 1;
   if ((capacity & mask) !== 0) {
     throw new Error("capacity must be power of two");
   }
-
-  const jobCount = 131072;
   const queueHeaderSize = 32;
   const slotSize = 16;
   const slotsSize = capacity * slotSize;
 
-  const queueBuffer = device.createBuffer({
-    size: queueHeaderSize,
-    usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_DST | GPUBufferUsage.COPY_SRC,
-  });
-
-  const slotsBuffer = device.createBuffer({
-    size: slotsSize,
-    usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_DST,
-  });
-
-  const inputBuffer = device.createBuffer({
-    size: jobCount * 4,
-    usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_DST,
-  });
-
-  const outputBuffer = device.createBuffer({
-    size: jobCount * 4,
-    usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_SRC,
-  });
-
-  const enqueueStatusBuffer = device.createBuffer({
-    size: jobCount * 4,
-    usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_SRC | GPUBufferUsage.COPY_DST,
-  });
-
-  const dequeueStatusBuffer = device.createBuffer({
-    size: jobCount * 4,
-    usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_SRC | GPUBufferUsage.COPY_DST,
-  });
-
-  const paramsBuffer = device.createBuffer({
-    size: 32,
-    usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST,
-  });
+  const queueBuffers = [];
+  const inputBuffers = [];
+  const outputBuffers = [];
+  const enqueueStatusBuffers = [];
+  const dequeueStatusBuffers = [];
+  const enqueueBindGroups = [];
+  const dequeueBindGroups = [];
+  const readbackOutputs = [];
+  const readbackEnqueueStatuses = [];
+  const readbackDequeueStatuses = [];
 
   const queueHeader = new Uint32Array([
     0, // head
@@ -321,7 +392,6 @@ async function init() {
     0,
     0,
   ]);
-  device.queue.writeBuffer(queueBuffer, 0, queueHeader);
 
   const slotsInit = new Uint32Array((slotsSize / 4));
   for (let i = 0; i < capacity; i += 1) {
@@ -331,154 +401,261 @@ async function init() {
     slotsInit[base + 2] = 0;
     slotsInit[base + 3] = 0;
   }
-  device.queue.writeBuffer(slotsBuffer, 0, slotsInit);
-
-  const inputJobs = new Uint32Array(jobCount);
-  fillRandomU32(inputJobs);
-  device.queue.writeBuffer(inputBuffer, 0, inputJobs);
-
+  const inputJobsByImage = Array.from({ length: imageCount }, () => new Uint32Array(jobCount));
   const paramsData = new Uint32Array([jobCount, 0, 0, 0, 0, 0, 0, 0]);
-  device.queue.writeBuffer(paramsBuffer, 0, paramsData);
-
-  const enqueueBindGroup = device.createBindGroup({
-    layout: bindGroupLayout,
-    entries: [
-      { binding: 0, resource: { buffer: queueBuffer } },
-      { binding: 1, resource: { buffer: slotsBuffer } },
-      { binding: 2, resource: { buffer: inputBuffer } },
-      { binding: 3, resource: { buffer: outputBuffer } },
-      { binding: 4, resource: { buffer: enqueueStatusBuffer } },
-      { binding: 5, resource: { buffer: paramsBuffer } },
-    ],
-  });
-
-  const dequeueBindGroup = device.createBindGroup({
-    layout: bindGroupLayout,
-    entries: [
-      { binding: 0, resource: { buffer: queueBuffer } },
-      { binding: 1, resource: { buffer: slotsBuffer } },
-      { binding: 2, resource: { buffer: inputBuffer } },
-      { binding: 3, resource: { buffer: outputBuffer } },
-      { binding: 4, resource: { buffer: dequeueStatusBuffer } },
-      { binding: 5, resource: { buffer: paramsBuffer } },
-    ],
-  });
-
-  device.pushErrorScope("validation");
-  device.pushErrorScope("out-of-memory");
-  const encoder = device.createCommandEncoder();
   const zeroStatus = new Uint32Array(jobCount);
-  device.queue.writeBuffer(enqueueStatusBuffer, 0, zeroStatus);
-  device.queue.writeBuffer(dequeueStatusBuffer, 0, zeroStatus);
-  const enqueuePasses = 32;
-  const dequeuePasses = 32;
-  for (let i = 0; i < enqueuePasses; i += 1) {
-    const pass = encoder.beginComputePass();
-    pass.setPipeline(enqueuePipeline);
-    pass.setBindGroup(0, enqueueBindGroup);
-    pass.dispatchWorkgroups(Math.ceil(jobCount / 64));
-    pass.end();
-  }
-  for (let i = 0; i < dequeuePasses; i += 1) {
-    const pass = encoder.beginComputePass();
-    pass.setPipeline(dequeuePipeline);
-    pass.setBindGroup(0, dequeueBindGroup);
-    pass.dispatchWorkgroups(Math.ceil(jobCount / 64));
-    pass.end();
+  const enqueuePasses = 8;
+  const dequeuePasses = 8;
+  const workgroups = Math.ceil(jobCount / 64);
+
+  for (let imageIndex = 0; imageIndex < imageCount; imageIndex += 1) {
+    const queueBuffer = device.createBuffer({
+      size: queueHeaderSize,
+      usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_DST | GPUBufferUsage.COPY_SRC,
+    });
+    const slotsBuffer = device.createBuffer({
+      size: slotsSize,
+      usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_DST,
+    });
+    const inputBuffer = device.createBuffer({
+      size: jobCount * 4,
+      usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_DST,
+    });
+    const outputBuffer = device.createBuffer({
+      size: jobCount * 4,
+      usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_SRC,
+    });
+    const enqueueStatusBuffer = device.createBuffer({
+      size: jobCount * 4,
+      usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_SRC | GPUBufferUsage.COPY_DST,
+    });
+    const dequeueStatusBuffer = device.createBuffer({
+      size: jobCount * 4,
+      usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_SRC | GPUBufferUsage.COPY_DST,
+    });
+    const paramsBuffer = device.createBuffer({
+      size: 32,
+      usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST,
+    });
+
+    device.queue.writeBuffer(queueBuffer, 0, queueHeader);
+    device.queue.writeBuffer(slotsBuffer, 0, slotsInit);
+    fillRandomU32(inputJobsByImage[imageIndex]);
+    seedLineBuffer(inputJobsByImage[imageIndex], getFrameSeed(0, imageIndex));
+    device.queue.writeBuffer(inputBuffer, 0, inputJobsByImage[imageIndex]);
+    device.queue.writeBuffer(enqueueStatusBuffer, 0, zeroStatus);
+    device.queue.writeBuffer(dequeueStatusBuffer, 0, zeroStatus);
+    device.queue.writeBuffer(paramsBuffer, 0, paramsData);
+
+    const enqueueBindGroup = device.createBindGroup({
+      layout: bindGroupLayout,
+      entries: [
+        { binding: 0, resource: { buffer: queueBuffer } },
+        { binding: 1, resource: { buffer: slotsBuffer } },
+        { binding: 2, resource: { buffer: inputBuffer } },
+        { binding: 3, resource: { buffer: outputBuffer } },
+        { binding: 4, resource: { buffer: enqueueStatusBuffer } },
+        { binding: 5, resource: { buffer: paramsBuffer } },
+      ],
+    });
+    const dequeueBindGroup = device.createBindGroup({
+      layout: bindGroupLayout,
+      entries: [
+        { binding: 0, resource: { buffer: queueBuffer } },
+        { binding: 1, resource: { buffer: slotsBuffer } },
+        { binding: 2, resource: { buffer: inputBuffer } },
+        { binding: 3, resource: { buffer: outputBuffer } },
+        { binding: 4, resource: { buffer: dequeueStatusBuffer } },
+        { binding: 5, resource: { buffer: paramsBuffer } },
+      ],
+    });
+
+    const readbackOutput = device.createBuffer({
+      size: jobCount * 4,
+      usage: GPUBufferUsage.COPY_DST | GPUBufferUsage.MAP_READ,
+    });
+    const readbackEnqueueStatus = device.createBuffer({
+      size: jobCount * 4,
+      usage: GPUBufferUsage.COPY_DST | GPUBufferUsage.MAP_READ,
+    });
+    const readbackDequeueStatus = device.createBuffer({
+      size: jobCount * 4,
+      usage: GPUBufferUsage.COPY_DST | GPUBufferUsage.MAP_READ,
+    });
+
+    queueBuffers.push(queueBuffer);
+    inputBuffers.push(inputBuffer);
+    outputBuffers.push(outputBuffer);
+    enqueueStatusBuffers.push(enqueueStatusBuffer);
+    dequeueStatusBuffers.push(dequeueStatusBuffer);
+    enqueueBindGroups.push(enqueueBindGroup);
+    dequeueBindGroups.push(dequeueBindGroup);
+    readbackOutputs.push(readbackOutput);
+    readbackEnqueueStatuses.push(readbackEnqueueStatus);
+    readbackDequeueStatuses.push(readbackDequeueStatus);
+    setProgress(imageIndex, 0);
   }
 
-  const readbackOutput = device.createBuffer({
-    size: jobCount * 4,
-    usage: GPUBufferUsage.COPY_DST | GPUBufferUsage.MAP_READ,
+  spectrogramCanvases.forEach((canvas) => {
+    const ctx = canvas.getContext("2d");
+    if (ctx) {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+    }
   });
-  const readbackEnqueueStatus = device.createBuffer({
-    size: jobCount * 4,
-    usage: GPUBufferUsage.COPY_DST | GPUBufferUsage.MAP_READ,
-  });
-  const readbackDequeueStatus = device.createBuffer({
-    size: jobCount * 4,
-    usage: GPUBufferUsage.COPY_DST | GPUBufferUsage.MAP_READ,
-  });
-  const readbackQueue = device.createBuffer({
-    size: queueHeaderSize,
-    usage: GPUBufferUsage.COPY_DST | GPUBufferUsage.MAP_READ,
-  });
 
-  encoder.copyBufferToBuffer(outputBuffer, 0, readbackOutput, 0, jobCount * 4);
-  encoder.copyBufferToBuffer(enqueueStatusBuffer, 0, readbackEnqueueStatus, 0, jobCount * 4);
-  encoder.copyBufferToBuffer(dequeueStatusBuffer, 0, readbackDequeueStatus, 0, jobCount * 4);
-  encoder.copyBufferToBuffer(queueBuffer, 0, readbackQueue, 0, queueHeaderSize);
+  logLine(
+    renderContinuously
+      ? `Rendering continuously (${jobsPerImage} jobs per line).`
+      : `Rendering ${totalFrames} frames of interleaved static (${jobsPerImage} jobs per line).`
+  );
+  const renderStart = performance.now();
+  let totalEnq = 0;
+  let totalDeq = 0;
 
-  device.queue.submit([encoder.finish()]);
-  await device.queue.onSubmittedWorkDone();
-  const oomError = await device.popErrorScope();
-  const validationError = await device.popErrorScope();
-  if (validationError) {
-    logLine(`Validation error: ${validationError.message}`);
-  }
-  if (oomError) {
-    logLine(`OOM error: ${oomError.message}`);
-  }
+  for (let frameIndex = 0; ; frameIndex += 1) {
+    if (!renderContinuously && frameIndex >= totalFrames) {
+      break;
+    }
+    for (let imageIndex = 0; imageIndex < imageCount; imageIndex += 1) {
+      fillRandomU32(inputJobsByImage[imageIndex]);
+      seedLineBuffer(inputJobsByImage[imageIndex], getFrameSeed(frameIndex, imageIndex));
+      device.queue.writeBuffer(inputBuffers[imageIndex], 0, inputJobsByImage[imageIndex]);
+      device.queue.writeBuffer(enqueueStatusBuffers[imageIndex], 0, zeroStatus);
+      device.queue.writeBuffer(dequeueStatusBuffers[imageIndex], 0, zeroStatus);
+    }
 
-  await readbackOutput.mapAsync(GPUMapMode.READ);
-  await readbackEnqueueStatus.mapAsync(GPUMapMode.READ);
-  await readbackDequeueStatus.mapAsync(GPUMapMode.READ);
-  await readbackQueue.mapAsync(GPUMapMode.READ);
+    device.pushErrorScope("validation");
+    device.pushErrorScope("out-of-memory");
+    const encoder = device.createCommandEncoder();
 
-  const output = new Uint32Array(readbackOutput.getMappedRange());
-  const enqueueStatus = new Uint32Array(readbackEnqueueStatus.getMappedRange());
-  const dequeueStatus = new Uint32Array(readbackDequeueStatus.getMappedRange());
-  const queueState = new Uint32Array(readbackQueue.getMappedRange());
+    for (let passIndex = 0; passIndex < enqueuePasses; passIndex += 1) {
+      for (let imageIndex = 0; imageIndex < imageCount; imageIndex += 1) {
+        const pass = encoder.beginComputePass();
+        pass.setPipeline(enqueuePipeline);
+        pass.setBindGroup(0, enqueueBindGroups[imageIndex]);
+        pass.dispatchWorkgroups(workgroups);
+        pass.end();
+      }
+    }
+    for (let passIndex = 0; passIndex < dequeuePasses; passIndex += 1) {
+      for (let imageIndex = 0; imageIndex < imageCount; imageIndex += 1) {
+        const pass = encoder.beginComputePass();
+        pass.setPipeline(dequeuePipeline);
+        pass.setBindGroup(0, dequeueBindGroups[imageIndex]);
+        pass.dispatchWorkgroups(workgroups);
+        pass.end();
+      }
+    }
 
-  const enqOk = enqueueStatus.reduce((sum, v) => sum + v, 0);
-  const deqOk = dequeueStatus.reduce((sum, v) => sum + v, 0);
+    for (let imageIndex = 0; imageIndex < imageCount; imageIndex += 1) {
+      encoder.copyBufferToBuffer(
+        outputBuffers[imageIndex],
+        0,
+        readbackOutputs[imageIndex],
+        0,
+        jobCount * 4
+      );
+      encoder.copyBufferToBuffer(
+        enqueueStatusBuffers[imageIndex],
+        0,
+        readbackEnqueueStatuses[imageIndex],
+        0,
+        jobCount * 4
+      );
+      encoder.copyBufferToBuffer(
+        dequeueStatusBuffers[imageIndex],
+        0,
+        readbackDequeueStatuses[imageIndex],
+        0,
+        jobCount * 4
+      );
+    }
 
-  logLine(`Enqueued: ${enqOk} / ${jobCount}`);
-  logLine(`Dequeued: ${deqOk} / ${jobCount}`);
-  logLine(`Queue head/tail: ${queueState[0]} / ${queueState[1]}`);
-  if (deqOk === 0) {
-    logLine("No data dequeued.");
-  }
+    device.queue.submit([encoder.finish()]);
+    await device.queue.onSubmittedWorkDone();
+    const oomError = await device.popErrorScope();
+    const validationError = await device.popErrorScope();
+    if (validationError) {
+      logLine(`Frame ${frameIndex + 1}: Validation error: ${validationError.message}`);
+    }
+    if (oomError) {
+      logLine(`Frame ${frameIndex + 1}: OOM error: ${oomError.message}`);
+    }
 
-  const samples = [];
-  for (let i = 0; i < output.length; i += 1) {
-    if (dequeueStatus[i] === 1) {
-      samples.push(u32ToFloatSigned(output[i]));
+    const mapPromises = [];
+    for (let imageIndex = 0; imageIndex < imageCount; imageIndex += 1) {
+      mapPromises.push(
+        readbackOutputs[imageIndex].mapAsync(GPUMapMode.READ),
+        readbackEnqueueStatuses[imageIndex].mapAsync(GPUMapMode.READ),
+        readbackDequeueStatuses[imageIndex].mapAsync(GPUMapMode.READ)
+      );
+    }
+    await Promise.all(mapPromises);
+
+    let frameEnq = 0;
+    let frameDeq = 0;
+    for (let imageIndex = 0; imageIndex < imageCount; imageIndex += 1) {
+      const output = new Uint32Array(readbackOutputs[imageIndex].getMappedRange());
+      const enqueueStatus = new Uint32Array(
+        readbackEnqueueStatuses[imageIndex].getMappedRange()
+      );
+      const dequeueStatus = new Uint32Array(
+        readbackDequeueStatuses[imageIndex].getMappedRange()
+      );
+
+      let enqOk = 0;
+      for (let i = 0; i < enqueueStatus.length; i += 1) {
+        enqOk += enqueueStatus[i];
+      }
+      let deqOk = 0;
+      for (let i = 0; i < dequeueStatus.length; i += 1) {
+        deqOk += dequeueStatus[i];
+      }
+
+      frameEnq += enqOk;
+      frameDeq += deqOk;
+      if (!renderContinuously) {
+        totalEnq += enqOk;
+        totalDeq += deqOk;
+      }
+
+      const lineIndex = getLineIndex(frameIndex, imageIndex, lineCount);
+      drawStaticLine(
+        spectrogramCanvases[imageIndex],
+        lineIndex,
+        output,
+        dequeueStatus,
+        inputJobsByImage[imageIndex]
+      );
+
+      readbackOutputs[imageIndex].unmap();
+      readbackEnqueueStatuses[imageIndex].unmap();
+      readbackDequeueStatuses[imageIndex].unmap();
+    }
+
+    if (frameIndex === 0) {
+      logLine(`Frame 1: Enqueued ${frameEnq} / ${jobsPerImage * imageCount}`);
+      logLine(`Frame 1: Dequeued ${frameDeq} / ${jobsPerImage * imageCount}`);
+    }
+
+    if (renderContinuously) {
+      for (let imageIndex = 0; imageIndex < imageCount; imageIndex += 1) {
+        setProgress(imageIndex, frameIndex + 1);
+      }
+    } else {
+      const progress = (frameIndex + 1) / totalFrames;
+      for (let imageIndex = 0; imageIndex < imageCount; imageIndex += 1) {
+        setProgress(imageIndex, progress);
+      }
     }
   }
 
-  const usable = samples.length;
-  if (usable < 1024) {
-    logLine(`Warning: only ${usable} samples for FFT.`);
+  if (!renderContinuously) {
+    const elapsed = performance.now() - renderStart;
+    logLine(`Rendered ${totalFrames} frames in ${Math.round(elapsed)}ms.`);
+    logLine(`Total enqueued: ${totalEnq} / ${totalJobs}`);
+    logLine(`Total dequeued: ${totalDeq} / ${totalJobs}`);
   }
-
-  const windowSize = 256;
-  const hop = 128;
-  const { spec, frames, bins, maxMag } = makeSpectrogram(samples, windowSize, hop);
-
-  const spectrumAvg = new Float32Array(bins);
-  for (let f = 0; f < frames; f += 1) {
-    for (let b = 0; b < bins; b += 1) {
-      spectrumAvg[b] += spec[f * bins + b];
-    }
-  }
-  for (let b = 0; b < bins; b += 1) {
-    spectrumAvg[b] /= Math.max(1, frames);
-  }
-
-  const analysis = analyzeRandomness(samples, spectrumAvg);
-  logLine(`Mean: ${analysis.mean.toFixed(4)}`);
-  logLine(`Variance: ${analysis.variance.toFixed(4)} (uniform [-1,1] ~= 0.3333)`);
-  logLine(`Lag-1 autocorr: ${analysis.autocorr.toFixed(4)} (near 0 is good)`);
-  logLine(`Spectral flatness: ${analysis.flatness.toFixed(4)} (near 1 is good)`);
-  logLine(`Spectrum CV: ${analysis.spectrumCv.toFixed(4)} (lower is flatter)`);
-
-  drawSpectrogram(spec, frames, bins, maxMag);
-
-  readbackOutput.unmap();
-  readbackEnqueueStatus.unmap();
-  readbackDequeueStatus.unmap();
-  readbackQueue.unmap();
 }
 
 init().catch((err) => {
