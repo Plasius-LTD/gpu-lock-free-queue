@@ -27,3 +27,8 @@ This repo provides a minimal WebGPU lock-free MPMC ring queue (WGSL) with a smal
 ## Conventions
 - Use Conventional Commits (see `CONTRIBUTING.md`).
 - Keep changes focused and add/update tests when behavior changes.
+
+## AI guidance
+- After any change, run relevant BDD/TDD tests when they exist; mention if skipped.
+- For fixes, add/update a BDD or TDD test that fails first and validate it passes after the fix when possible.
+- When adding or updating dependencies, prefer lazy-loading (dynamic import/code splitting) to avoid heavy first-load network use when applicable.
