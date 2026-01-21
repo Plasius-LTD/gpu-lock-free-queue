@@ -6,6 +6,8 @@
 
 A minimal WebGPU lock-free MPMC ring queue using a per-slot sequence counter (Vyukov-style). This is a starter implementation focused on correctness, robustness, and low overhead.
 
+Apache-2.0. ESM + CJS builds. WGSL assets are published in `dist/`.
+
 ## Install
 ```
 npm install @plasius/gpu-lock-free-queue
@@ -38,6 +40,10 @@ python3 -m http.server
 ```
 
 Then open `http://localhost:8000` and check the console/output.
+
+## Build Outputs
+
+`npm run build` emits `dist/index.js`, `dist/index.cjs`, and `dist/queue.wgsl`.
 
 ## Tests
 ```

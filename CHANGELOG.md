@@ -19,6 +19,7 @@ The format is based on **[Keep a Changelog](https://keepachangelog.com/en/1.1.0/
   - `loadQueueWgsl` accepts `url`/`fetcher` overrides and falls back to filesystem reads for `file:` URLs.
   - Demo renders 500 interleaved static frames using per-image queues per frame.
   - Demo updates canvases line-by-line for progressive static output.
+  - Build outputs now ship as ESM and CJS bundles with the WGSL asset in `dist/`.
 
 - **Fixed**
   - WGSL entry points now validate queue configuration and clamp job counts to buffer lengths.
