@@ -24,6 +24,7 @@ The format is based on **[Keep a Changelog](https://keepachangelog.com/en/1.1.0/
 - **Fixed**
   - WGSL entry points now validate queue configuration and clamp job counts to buffer lengths.
   - WGSL load errors now surface with explicit HTTP status details.
+  - CD build now installs TypeScript for the tsup build step.
 
 - **Security**
   - None.
