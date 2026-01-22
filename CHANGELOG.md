@@ -9,6 +9,20 @@ The format is based on **[Keep a Changelog](https://keepachangelog.com/en/1.1.0/
 ## [Unreleased]
 
 - **Added**
+  - (placeholder)
+
+- **Changed**
+  - (placeholder)
+
+- **Fixed**
+  - (placeholder)
+
+- **Security**
+  - (placeholder)
+
+## [0.1.2] - 2026-01-22
+
+- **Added**
   - Deterministic demo test pattern mode for stable image hashing in e2e tests.
   - 4x4 demo grid for multi-canvas output.
   - Timestamped demo logging.
@@ -36,3 +50,4 @@ The format is based on **[Keep a Changelog](https://keepachangelog.com/en/1.1.0/
   - Demo for enqueue/dequeue, FFT spectrogram, and randomness heuristics.
 
 [0.1.0]: https://github.com/Plasius-LTD/gpu-lock-free-queue/releases/tag/v0.1.0
+[0.1.2]: https://github.com/Plasius-LTD/gpu-lock-free-queue/releases/tag/v0.1.2
