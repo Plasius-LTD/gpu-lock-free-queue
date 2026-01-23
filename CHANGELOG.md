@@ -20,6 +20,16 @@ The format is based on **[Keep a Changelog](https://keepachangelog.com/en/1.1.0/
 - **Security**
   - (placeholder)
 
+## [0.2.0] - 2026-01-23
+
+- **Changed**
+  - **Breaking:** WGSL bindings now include a dedicated payload ring buffer plus input/output payload buffers.
+  - Queue headers now carry `payload_stride` (u32 words) and job payloads are copied into the ring on enqueue.
+  - Demo and tests updated to use payload buffers instead of `input_jobs`/`output_jobs`.
+
+- **Fixed**
+  - Payload job counts now clamp to payload buffer lengths to prevent overruns.
+
 ## [0.1.2] - 2026-01-22
 
 - **Added**
@@ -51,3 +61,4 @@ The format is based on **[Keep a Changelog](https://keepachangelog.com/en/1.1.0/
 
 [0.1.0]: https://github.com/Plasius-LTD/gpu-lock-free-queue/releases/tag/v0.1.0
 [0.1.2]: https://github.com/Plasius-LTD/gpu-lock-free-queue/releases/tag/v0.1.2
+[0.2.0]: https://github.com/Plasius-LTD/gpu-lock-free-queue/releases/tag/v0.2.0

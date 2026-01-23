@@ -27,6 +27,7 @@ This repo provides a minimal WebGPU lock-free MPMC ring queue (WGSL) with a smal
 ## Conventions
 - Use Conventional Commits (see `CONTRIBUTING.md`).
 - Keep changes focused and add/update tests when behavior changes.
+- Architectural changes require ADRs in `docs/adrs/` (or the repo ADRs folder); ensure a package-function ADR exists.
 
 ## AI guidance
 - After any change, run relevant BDD/TDD tests when they exist; mention if skipped.

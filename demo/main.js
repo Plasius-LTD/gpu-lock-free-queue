@@ -10,6 +10,41 @@ const lineStride = 37;
 const lineOffset = 11;
 const progressByIndex = new Map();
 
+function isProbablyHtml(text) {
+  const trimmed = text.trimStart().slice(0, 20).toLowerCase();
+  return trimmed.startsWith("<!doctype html") || trimmed.startsWith("<html");
+}
+
+async function loadQueueWgsl() {
+  const candidates = [
+    new URL("./queue.wgsl", import.meta.url),
+    new URL("../src/queue.wgsl", import.meta.url),
+    new URL("../dist/queue.wgsl", import.meta.url),
+  ];
+  const errors = [];
+
+  for (const url of candidates) {
+    try {
+      const response = await fetch(url);
+      if (!response.ok) {
+        errors.push(`${url}: ${response.status} ${response.statusText}`.trim());
+        continue;
+      }
+      const text = await response.text();
+      if (isProbablyHtml(text)) {
+        errors.push(`${url}: received HTML instead of WGSL`);
+        continue;
+      }
+      return text;
+    } catch (err) {
+      const message = err instanceof Error ? err.message : String(err);
+      errors.push(`${url}: ${message}`);
+    }
+  }
+
+  throw new Error(`Failed to load WGSL. ${errors.join(" | ")}`);
+}
+
 for (const label of progressLabels) {
   const index = Number.parseInt(label.dataset.index ?? "", 10);
   if (Number.isFinite(index)) {
@@ -185,7 +220,7 @@ function makeSpectrogram(samples, windowSize, hop) {
   return { spec, frames, bins, maxMag };
 }
 
-function drawStaticLine(targetCanvas, lineIndex, output, status, fallback) {
+function drawStaticLine(targetCanvas, lineIndex, output, status, fallback, payloadStride) {
   const ctx = targetCanvas.getContext("2d");
   if (!ctx) {
     return;
@@ -194,7 +229,8 @@ function drawStaticLine(targetCanvas, lineIndex, output, status, fallback) {
   const img = ctx.createImageData(width, 1);
   const data = img.data;
   for (let x = 0; x < width; x += 1) {
-    const value = status[x] === 1 ? output[x] : fallback[x];
+    const base = x * payloadStride;
+    const value = status[x] === 1 ? output[base] : fallback[base];
     const color = colorMap(u32ToFloat01(value));
     const idx = x * 4;
     data[idx] = color[0];
@@ -325,7 +361,7 @@ async function init() {
   }
 
   const device = await adapter.requestDevice();
-  const shaderCode = await fetch("../src/queue.wgsl").then((res) => res.text());
+  const shaderCode = await loadQueueWgsl();
   const module = device.createShaderModule({ code: shaderCode });
   const info = await module.getCompilationInfo();
   if (info.messages.length) {
@@ -338,10 +374,11 @@ async function init() {
     entries: [
       { binding: 0, visibility: GPUShaderStage.COMPUTE, buffer: { type: "storage" } },
       { binding: 1, visibility: GPUShaderStage.COMPUTE, buffer: { type: "storage" } },
-      { binding: 2, visibility: GPUShaderStage.COMPUTE, buffer: { type: "read-only-storage" } },
-      { binding: 3, visibility: GPUShaderStage.COMPUTE, buffer: { type: "storage" } },
+      { binding: 2, visibility: GPUShaderStage.COMPUTE, buffer: { type: "storage" } },
+      { binding: 3, visibility: GPUShaderStage.COMPUTE, buffer: { type: "read-only-storage" } },
       { binding: 4, visibility: GPUShaderStage.COMPUTE, buffer: { type: "storage" } },
-      { binding: 5, visibility: GPUShaderStage.COMPUTE, buffer: { type: "uniform" } },
+      { binding: 5, visibility: GPUShaderStage.COMPUTE, buffer: { type: "storage" } },
+      { binding: 6, visibility: GPUShaderStage.COMPUTE, buffer: { type: "uniform" } },
     ],
   });
   const pipelineLayout = device.createPipelineLayout({ bindGroupLayouts: [bindGroupLayout] });
@@ -361,6 +398,8 @@ async function init() {
   const lineCount = spectrogramCanvases[0].height;
   const jobsPerImage = lineWidth;
   const jobCount = jobsPerImage;
+  const payloadStride = 1;
+  const payloadJobSize = payloadStride * 4;
   const totalJobs = renderContinuously ? null : jobsPerImage * imageCount * totalFrames;
   const capacity = jobCount;
   const mask = capacity - 1;
@@ -370,8 +409,11 @@ async function init() {
   const queueHeaderSize = 32;
   const slotSize = 16;
   const slotsSize = capacity * slotSize;
+  const payloadRingSize = capacity * payloadJobSize;
+  const payloadIoSize = jobCount * payloadJobSize;
 
   const queueBuffers = [];
+  const payloadBuffers = [];
   const inputBuffers = [];
   const outputBuffers = [];
   const enqueueStatusBuffers = [];
@@ -387,7 +429,7 @@ async function init() {
     0, // tail
     capacity,
     mask,
-    0,
+    payloadStride,
     0,
     0,
     0,
@@ -401,7 +443,10 @@ async function init() {
     slotsInit[base + 2] = 0;
     slotsInit[base + 3] = 0;
   }
-  const inputJobsByImage = Array.from({ length: imageCount }, () => new Uint32Array(jobCount));
+  const inputPayloadsByImage = Array.from(
+    { length: imageCount },
+    () => new Uint32Array(jobCount * payloadStride)
+  );
   const paramsData = new Uint32Array([jobCount, 0, 0, 0, 0, 0, 0, 0]);
   const zeroStatus = new Uint32Array(jobCount);
   const enqueuePasses = 8;
@@ -417,12 +462,16 @@ async function init() {
       size: slotsSize,
       usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_DST,
     });
+    const payloadBuffer = device.createBuffer({
+      size: payloadRingSize,
+      usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_DST,
+    });
     const inputBuffer = device.createBuffer({
-      size: jobCount * 4,
+      size: payloadIoSize,
       usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_DST,
     });
     const outputBuffer = device.createBuffer({
-      size: jobCount * 4,
+      size: payloadIoSize,
       usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_SRC,
     });
     const enqueueStatusBuffer = device.createBuffer({
@@ -440,9 +489,9 @@ async function init() {
 
     device.queue.writeBuffer(queueBuffer, 0, queueHeader);
     device.queue.writeBuffer(slotsBuffer, 0, slotsInit);
-    fillRandomU32(inputJobsByImage[imageIndex]);
-    seedLineBuffer(inputJobsByImage[imageIndex], getFrameSeed(0, imageIndex));
-    device.queue.writeBuffer(inputBuffer, 0, inputJobsByImage[imageIndex]);
+    fillRandomU32(inputPayloadsByImage[imageIndex]);
+    seedLineBuffer(inputPayloadsByImage[imageIndex], getFrameSeed(0, imageIndex));
+    device.queue.writeBuffer(inputBuffer, 0, inputPayloadsByImage[imageIndex]);
     device.queue.writeBuffer(enqueueStatusBuffer, 0, zeroStatus);
     device.queue.writeBuffer(dequeueStatusBuffer, 0, zeroStatus);
     device.queue.writeBuffer(paramsBuffer, 0, paramsData);
@@ -452,10 +501,11 @@ async function init() {
       entries: [
         { binding: 0, resource: { buffer: queueBuffer } },
         { binding: 1, resource: { buffer: slotsBuffer } },
-        { binding: 2, resource: { buffer: inputBuffer } },
-        { binding: 3, resource: { buffer: outputBuffer } },
-        { binding: 4, resource: { buffer: enqueueStatusBuffer } },
-        { binding: 5, resource: { buffer: paramsBuffer } },
+        { binding: 2, resource: { buffer: payloadBuffer } },
+        { binding: 3, resource: { buffer: inputBuffer } },
+        { binding: 4, resource: { buffer: outputBuffer } },
+        { binding: 5, resource: { buffer: enqueueStatusBuffer } },
+        { binding: 6, resource: { buffer: paramsBuffer } },
       ],
     });
     const dequeueBindGroup = device.createBindGroup({
@@ -463,15 +513,16 @@ async function init() {
       entries: [
         { binding: 0, resource: { buffer: queueBuffer } },
         { binding: 1, resource: { buffer: slotsBuffer } },
-        { binding: 2, resource: { buffer: inputBuffer } },
-        { binding: 3, resource: { buffer: outputBuffer } },
-        { binding: 4, resource: { buffer: dequeueStatusBuffer } },
-        { binding: 5, resource: { buffer: paramsBuffer } },
+        { binding: 2, resource: { buffer: payloadBuffer } },
+        { binding: 3, resource: { buffer: inputBuffer } },
+        { binding: 4, resource: { buffer: outputBuffer } },
+        { binding: 5, resource: { buffer: dequeueStatusBuffer } },
+        { binding: 6, resource: { buffer: paramsBuffer } },
       ],
     });
 
     const readbackOutput = device.createBuffer({
-      size: jobCount * 4,
+      size: payloadIoSize,
       usage: GPUBufferUsage.COPY_DST | GPUBufferUsage.MAP_READ,
     });
     const readbackEnqueueStatus = device.createBuffer({
@@ -484,6 +535,7 @@ async function init() {
     });
 
     queueBuffers.push(queueBuffer);
+    payloadBuffers.push(payloadBuffer);
     inputBuffers.push(inputBuffer);
     outputBuffers.push(outputBuffer);
     enqueueStatusBuffers.push(enqueueStatusBuffer);
@@ -517,9 +569,9 @@ async function init() {
       break;
     }
     for (let imageIndex = 0; imageIndex < imageCount; imageIndex += 1) {
-      fillRandomU32(inputJobsByImage[imageIndex]);
-      seedLineBuffer(inputJobsByImage[imageIndex], getFrameSeed(frameIndex, imageIndex));
-      device.queue.writeBuffer(inputBuffers[imageIndex], 0, inputJobsByImage[imageIndex]);
+      fillRandomU32(inputPayloadsByImage[imageIndex]);
+      seedLineBuffer(inputPayloadsByImage[imageIndex], getFrameSeed(frameIndex, imageIndex));
+      device.queue.writeBuffer(inputBuffers[imageIndex], 0, inputPayloadsByImage[imageIndex]);
       device.queue.writeBuffer(enqueueStatusBuffers[imageIndex], 0, zeroStatus);
       device.queue.writeBuffer(dequeueStatusBuffers[imageIndex], 0, zeroStatus);
     }
@@ -553,7 +605,7 @@ async function init() {
         0,
         readbackOutputs[imageIndex],
         0,
-        jobCount * 4
+        payloadIoSize
       );
       encoder.copyBufferToBuffer(
         enqueueStatusBuffers[imageIndex],
@@ -625,7 +677,8 @@ async function init() {
         lineIndex,
         output,
         dequeueStatus,
-        inputJobsByImage[imageIndex]
+        inputPayloadsByImage[imageIndex],
+        payloadStride
       );
 
       readbackOutputs[imageIndex].unmap();

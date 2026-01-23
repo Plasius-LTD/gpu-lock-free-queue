@@ -25,11 +25,23 @@ const shaderCode = await loadQueueWgsl();
 ## What this is
 - Lock-free multi-producer, multi-consumer ring queue on the GPU.
 - Uses per-slot sequence numbers to avoid ABA for slots within a 32-bit epoch.
-- Fixed-size jobs (u32) for now; a "job" can be expanded to a fixed-size struct or an index into a separate payload buffer.
+- Fixed-size payloads stored in a dedicated payload ring buffer; enqueue copies input payloads into the ring and dequeue copies them out to keep payload lifetimes robust.
+
+## Buffer layout (breaking change in v0.2.0)
+Bindings are:
+1. `@binding(0)` queue header: `{ head, tail, capacity, mask, payload_stride }`
+2. `@binding(1)` slot sequence array (`Slot`)
+3. `@binding(2)` payload ring buffer (`array<u32>`, length `capacity * payload_stride`)
+4. `@binding(3)` input payloads (`array<u32>`, length `job_count * payload_stride`)
+5. `@binding(4)` output payloads (`array<u32>`, length `job_count * payload_stride`)
+6. `@binding(5)` status flags (`array<u32>`, length `job_count`)
+7. `@binding(6)` params (`Params` with `job_count`)
+
+`payload_stride` is measured in 32-bit words and must be greater than zero.
 
 ## Limitations
 - Sequence counters are 32-bit. At extreme throughput over a long time, counters wrap and ABA can reappear. If you need true long-running safety, consider a reset protocol, sharding, or a future 64-bit atomic extension.
-- Jobs are fixed-size and must be power-of-two capacity.
+- Payloads are fixed-size and capacity must be power-of-two.
 - This demo is intentionally minimal; it is not yet integrated with a scheduler or backpressure policy.
 
 ## Run the demo
@@ -58,5 +70,5 @@ npm run test:e2e
 - `src/queue.wgsl`: Lock-free queue implementation.
 - `src/index.js`: Package entry point for loading the WGSL file.
 
-## Job shape
-Current jobs are `u32` values. If you need richer jobs, use a fixed-size struct (e.g., 16 bytes) or store indices into a separate payload buffer. Variable-length jobs should be modeled as an index + length into a payload arena to keep the queue fixed-size.
+## Payload shape
+Payloads are fixed-size chunks of `payload_stride` `u32` words. If you need `f32`, store `bitcast<u32>(value)` and reinterpret on the consumer side. For larger or variable-length payloads, enqueue an index + length into a separate payload arena.
