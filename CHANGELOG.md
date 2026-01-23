@@ -8,17 +8,16 @@ The format is based on **[Keep a Changelog](https://keepachangelog.com/en/1.1.0/
 
 ## [Unreleased]
 
-- **Added**
-  - (placeholder)
-
 - **Changed**
-  - (placeholder)
+  - **Breaking:** Queue payloads are now referenced by fixed metadata offsets into caller-managed payload buffers (no internal payload arena).
+  - **Breaking:** Queue header and bindings updated to remove payload arena fields and buffer.
+  - Demo and tests updated to reflect the new payload-handle layout.
+  - **Breaking:** Queue header now includes payload arena head/tail and capacity/mask fields.
+  - Queue helpers now expose a `queue_len` backlog snapshot for schedulers.
+  - Demo and tests updated to use job metadata and variable payload copies.
 
 - **Fixed**
-  - (placeholder)
-
-- **Security**
-  - (placeholder)
+  - Payload allocations now validate arena capacity before enqueue.
 
 ## [0.2.0] - 2026-01-23
 

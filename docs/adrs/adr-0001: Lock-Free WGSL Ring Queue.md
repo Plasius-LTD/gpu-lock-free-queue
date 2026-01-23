@@ -6,7 +6,7 @@
 - Date: 2026-01-08
 - Version: 1.0
 - Supersedes: N/A
-- Superseded by: N/A
+- Superseded by: ADR-0003
 
 ## Context
 

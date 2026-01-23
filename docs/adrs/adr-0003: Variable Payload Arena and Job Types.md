@@ -1,4 +1,4 @@
-# ADR-0003: Variable Payload Arena and Job Types
+# ADR-0003: Payload Handles and Job Types
 
 ## Status
 
@@ -10,32 +10,31 @@
 
 ## Context
 
-The queue must support variable-size payloads and multiple job types while keeping enqueue/dequeue fast and lock-free. Fixed-stride payloads limit flexibility and waste bandwidth for smaller jobs. We also need a standard job type field to enable per-type scheduling downstream.
+The queue must support variable-size payloads and multiple job types while keeping enqueue/dequeue fast and lock-free. We need payload flexibility without introducing allocator contention or deadlocks, and a standard job type field to enable per-type scheduling downstream.
 
 ## Decision
 
-We will extend the queue with a variable-size payload arena and job metadata:
+We will keep fixed-size job metadata and use payload handles (offsets) into caller-managed buffers:
 
-- Add a payload arena ring with its own head/tail/mask in the queue header.
 - Store `job_type`, `payload_offset`, and `payload_words` per slot.
-- Enqueue allocates variable-sized space from the payload arena (atomic tail advance), copies payload words into the arena, then publishes the slot.
-- Dequeue reads `payload_offset` and `payload_words` to copy out the payload and advances the payload arena head in strict FIFO order.
-- Enqueue ordering is important: payload reclamation assumes dequeue order aligns with enqueue order.
+- Enqueue validates payload bounds and publishes the slot without allocating payload storage.
+- Dequeue mirrors job metadata into `output_jobs` and optionally copies payload data from `input_payloads` into `output_payloads`.
+- Payload lifetime is managed outside the queue (frame-bounded arenas or generation handles are recommended).
 - Add a queue length helper for best-effort backlog snapshots used by schedulers.
 
 ## Consequences
 
-- **Positive:** Supports true variable payload sizes and per-type scheduling without changing the queue API per workload.
-- **Negative:** Adds allocator complexity and additional atomics for payload arena management.
-- **Neutral:** Payload arena behavior is FIFO and depends on enqueue/dequeue ordering for safe reclamation.
+- **Positive:** Variable payload sizes and per-type scheduling without allocator contention inside the queue.
+- **Negative:** Payload lifetime becomes the caller's responsibility; requires external arena or reclamation policy.
+- **Neutral:** The queue only transports handles/metadata; payload copying is optional.
 
 ## ABA Safety
 
 - **Slot ABA:** The queue keeps per-slot sequence counters; ABA safety is preserved within the 32-bit epoch, as in the original design.
-- **Payload ABA:** The payload arena is safe only if reclaimed in strict FIFO order. Reusing payload space out of order risks ABA on payload offsets. Therefore, payload head advances must align with dequeue order.
+- **Payload ABA:** Payload reuse safety is handled outside the queue. Use generation-tagged handles or frame-bounded arenas to avoid stale references.
 
 ## Alternatives Considered
 
-- **Fixed-stride payloads only:** Rejected due to wasted bandwidth and limited flexibility.
-- **Per-job dynamic allocations:** Rejected due to fragmentation and non-deterministic lifetime handling.
+- **Inline payload arena with variable allocation:** Rejected due to allocator contention and FIFO ordering constraints.
+- **Shared/weak pointer semantics:** Rejected due to high atomic overhead and complex control blocks on GPU.
 - **Multiple queues per job type:** Rejected for now to keep a single queue integration path.

@@ -25,23 +25,24 @@ const shaderCode = await loadQueueWgsl();
 ## What this is
 - Lock-free multi-producer, multi-consumer ring queue on the GPU.
 - Uses per-slot sequence numbers to avoid ABA for slots within a 32-bit epoch.
-- Fixed-size payloads stored in a dedicated payload ring buffer; enqueue copies input payloads into the ring and dequeue copies them out to keep payload lifetimes robust.
+- Fixed-size job metadata with payload offsets into a caller-managed data arena or buffer.
 
-## Buffer layout (breaking change in v0.2.0)
+## Buffer layout (breaking change in v0.4.0)
 Bindings are:
-1. `@binding(0)` queue header: `{ head, tail, capacity, mask, payload_stride }`
-2. `@binding(1)` slot sequence array (`Slot`)
-3. `@binding(2)` payload ring buffer (`array<u32>`, length `capacity * payload_stride`)
-4. `@binding(3)` input payloads (`array<u32>`, length `job_count * payload_stride`)
-5. `@binding(4)` output payloads (`array<u32>`, length `job_count * payload_stride`)
-6. `@binding(5)` status flags (`array<u32>`, length `job_count`)
-7. `@binding(6)` params (`Params` with `job_count`)
+1. `@binding(0)` queue header: `{ head, tail, capacity, mask }`
+2. `@binding(1)` slot array (`Slot` with `seq`, `job_type`, `payload_offset`, `payload_words`)
+3. `@binding(2)` input jobs (`array<JobMeta>` with `job_type`, `payload_offset`, `payload_words`)
+4. `@binding(3)` output jobs (`array<JobMeta>` with `job_type`, `payload_offset`, `payload_words`)
+5. `@binding(4)` input payloads (`array<u32>`, payload data referenced by `input_jobs.payload_offset`)
+6. `@binding(5)` output payloads (`array<u32>`, length `job_count * output_stride`)
+7. `@binding(6)` status flags (`array<u32>`, length `job_count`)
+8. `@binding(7)` params (`Params` with `job_count`, `output_stride`)
 
-`payload_stride` is measured in 32-bit words and must be greater than zero.
+`output_stride` is the per-job output stride (u32 words) used when copying payloads into `output_payloads`.
 
 ## Limitations
 - Sequence counters are 32-bit. At extreme throughput over a long time, counters wrap and ABA can reappear. If you need true long-running safety, consider a reset protocol, sharding, or a future 64-bit atomic extension.
-- Payloads are fixed-size and capacity must be power-of-two.
+- Payload lifetimes are managed by the caller. Ensure payload buffers remain valid until consumers finish, or use frame-bounded arenas/generation handles.
 - This demo is intentionally minimal; it is not yet integrated with a scheduler or backpressure policy.
 
 ## Run the demo
@@ -71,4 +72,4 @@ npm run test:e2e
 - `src/index.js`: Package entry point for loading the WGSL file.
 
 ## Payload shape
-Payloads are fixed-size chunks of `payload_stride` `u32` words. If you need `f32`, store `bitcast<u32>(value)` and reinterpret on the consumer side. For larger or variable-length payloads, enqueue an index + length into a separate payload arena.
+Payloads are variable-length chunks stored in a caller-managed buffer. Each job specifies `job_type`, `payload_offset`, and `payload_words` in `input_jobs`; dequeue copies payloads from `input_payloads` into `output_payloads` using `output_stride` and mirrors the metadata into `output_jobs`. If you need `f32`, store `bitcast<u32>(value)` and reinterpret on the consumer side.

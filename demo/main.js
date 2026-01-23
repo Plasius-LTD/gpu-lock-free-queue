@@ -220,7 +220,7 @@ function makeSpectrogram(samples, windowSize, hop) {
   return { spec, frames, bins, maxMag };
 }
 
-function drawStaticLine(targetCanvas, lineIndex, output, status, fallback, payloadStride) {
+function drawStaticLine(targetCanvas, lineIndex, output, status, fallback, outputStride) {
   const ctx = targetCanvas.getContext("2d");
   if (!ctx) {
     return;
@@ -229,7 +229,7 @@ function drawStaticLine(targetCanvas, lineIndex, output, status, fallback, paylo
   const img = ctx.createImageData(width, 1);
   const data = img.data;
   for (let x = 0; x < width; x += 1) {
-    const base = x * payloadStride;
+    const base = x * outputStride;
     const value = status[x] === 1 ? output[base] : fallback[base];
     const color = colorMap(u32ToFloat01(value));
     const idx = x * 4;
@@ -374,11 +374,12 @@ async function init() {
     entries: [
       { binding: 0, visibility: GPUShaderStage.COMPUTE, buffer: { type: "storage" } },
       { binding: 1, visibility: GPUShaderStage.COMPUTE, buffer: { type: "storage" } },
-      { binding: 2, visibility: GPUShaderStage.COMPUTE, buffer: { type: "storage" } },
-      { binding: 3, visibility: GPUShaderStage.COMPUTE, buffer: { type: "read-only-storage" } },
-      { binding: 4, visibility: GPUShaderStage.COMPUTE, buffer: { type: "storage" } },
+      { binding: 2, visibility: GPUShaderStage.COMPUTE, buffer: { type: "read-only-storage" } },
+      { binding: 3, visibility: GPUShaderStage.COMPUTE, buffer: { type: "storage" } },
+      { binding: 4, visibility: GPUShaderStage.COMPUTE, buffer: { type: "read-only-storage" } },
       { binding: 5, visibility: GPUShaderStage.COMPUTE, buffer: { type: "storage" } },
-      { binding: 6, visibility: GPUShaderStage.COMPUTE, buffer: { type: "uniform" } },
+      { binding: 6, visibility: GPUShaderStage.COMPUTE, buffer: { type: "storage" } },
+      { binding: 7, visibility: GPUShaderStage.COMPUTE, buffer: { type: "uniform" } },
     ],
   });
   const pipelineLayout = device.createPipelineLayout({ bindGroupLayouts: [bindGroupLayout] });
@@ -398,24 +399,24 @@ async function init() {
   const lineCount = spectrogramCanvases[0].height;
   const jobsPerImage = lineWidth;
   const jobCount = jobsPerImage;
-  const payloadStride = 1;
-  const payloadJobSize = payloadStride * 4;
+  const maxPayloadWords = 4;
+  const outputStride = maxPayloadWords;
   const totalJobs = renderContinuously ? null : jobsPerImage * imageCount * totalFrames;
   const capacity = jobCount;
   const mask = capacity - 1;
   if ((capacity & mask) !== 0) {
     throw new Error("capacity must be power of two");
   }
-  const queueHeaderSize = 32;
+  const queueHeaderSize = 16;
   const slotSize = 16;
   const slotsSize = capacity * slotSize;
-  const payloadRingSize = capacity * payloadJobSize;
-  const payloadIoSize = jobCount * payloadJobSize;
+  const payloadIoSize = jobCount * outputStride * 4;
 
   const queueBuffers = [];
-  const payloadBuffers = [];
-  const inputBuffers = [];
-  const outputBuffers = [];
+  const inputJobBuffers = [];
+  const outputJobBuffers = [];
+  const inputPayloadBuffers = [];
+  const outputPayloadBuffers = [];
   const enqueueStatusBuffers = [];
   const dequeueStatusBuffers = [];
   const enqueueBindGroups = [];
@@ -429,10 +430,6 @@ async function init() {
     0, // tail
     capacity,
     mask,
-    payloadStride,
-    0,
-    0,
-    0,
   ]);
 
   const slotsInit = new Uint32Array((slotsSize / 4));
@@ -445,9 +442,13 @@ async function init() {
   }
   const inputPayloadsByImage = Array.from(
     { length: imageCount },
-    () => new Uint32Array(jobCount * payloadStride)
+    () => new Uint32Array(jobCount * maxPayloadWords)
   );
-  const paramsData = new Uint32Array([jobCount, 0, 0, 0, 0, 0, 0, 0]);
+  const inputJobsByImage = Array.from(
+    { length: imageCount },
+    () => new Uint32Array(jobCount * 4)
+  );
+  const paramsData = new Uint32Array([jobCount, outputStride, 0, 0]);
   const zeroStatus = new Uint32Array(jobCount);
   const enqueuePasses = 8;
   const dequeuePasses = 8;
@@ -462,15 +463,19 @@ async function init() {
       size: slotsSize,
       usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_DST,
     });
-    const payloadBuffer = device.createBuffer({
-      size: payloadRingSize,
+    const inputJobsBuffer = device.createBuffer({
+      size: jobCount * 16,
       usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_DST,
     });
-    const inputBuffer = device.createBuffer({
+    const outputJobsBuffer = device.createBuffer({
+      size: jobCount * 16,
+      usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_DST,
+    });
+    const inputPayloadBuffer = device.createBuffer({
       size: payloadIoSize,
       usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_DST,
     });
-    const outputBuffer = device.createBuffer({
+    const outputPayloadBuffer = device.createBuffer({
       size: payloadIoSize,
       usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_SRC,
     });
@@ -483,15 +488,25 @@ async function init() {
       usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_SRC | GPUBufferUsage.COPY_DST,
     });
     const paramsBuffer = device.createBuffer({
-      size: 32,
+      size: 16,
       usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST,
     });
 
     device.queue.writeBuffer(queueBuffer, 0, queueHeader);
     device.queue.writeBuffer(slotsBuffer, 0, slotsInit);
+    const inputJobs = inputJobsByImage[imageIndex];
+    for (let i = 0; i < jobCount; i += 1) {
+      const base = i * 4;
+      inputJobs[base] = 0;
+      inputJobs[base + 1] = i * maxPayloadWords;
+      inputJobs[base + 2] = 1 + (i % maxPayloadWords);
+      inputJobs[base + 3] = 0;
+    }
     fillRandomU32(inputPayloadsByImage[imageIndex]);
     seedLineBuffer(inputPayloadsByImage[imageIndex], getFrameSeed(0, imageIndex));
-    device.queue.writeBuffer(inputBuffer, 0, inputPayloadsByImage[imageIndex]);
+    device.queue.writeBuffer(inputJobsBuffer, 0, inputJobs);
+    device.queue.writeBuffer(inputPayloadBuffer, 0, inputPayloadsByImage[imageIndex]);
+    device.queue.writeBuffer(outputJobsBuffer, 0, new Uint32Array(jobCount * 4));
     device.queue.writeBuffer(enqueueStatusBuffer, 0, zeroStatus);
     device.queue.writeBuffer(dequeueStatusBuffer, 0, zeroStatus);
     device.queue.writeBuffer(paramsBuffer, 0, paramsData);
@@ -501,11 +516,12 @@ async function init() {
       entries: [
         { binding: 0, resource: { buffer: queueBuffer } },
         { binding: 1, resource: { buffer: slotsBuffer } },
-        { binding: 2, resource: { buffer: payloadBuffer } },
-        { binding: 3, resource: { buffer: inputBuffer } },
-        { binding: 4, resource: { buffer: outputBuffer } },
-        { binding: 5, resource: { buffer: enqueueStatusBuffer } },
-        { binding: 6, resource: { buffer: paramsBuffer } },
+        { binding: 2, resource: { buffer: inputJobsBuffer } },
+        { binding: 3, resource: { buffer: outputJobsBuffer } },
+        { binding: 4, resource: { buffer: inputPayloadBuffer } },
+        { binding: 5, resource: { buffer: outputPayloadBuffer } },
+        { binding: 6, resource: { buffer: enqueueStatusBuffer } },
+        { binding: 7, resource: { buffer: paramsBuffer } },
       ],
     });
     const dequeueBindGroup = device.createBindGroup({
@@ -513,11 +529,12 @@ async function init() {
       entries: [
         { binding: 0, resource: { buffer: queueBuffer } },
         { binding: 1, resource: { buffer: slotsBuffer } },
-        { binding: 2, resource: { buffer: payloadBuffer } },
-        { binding: 3, resource: { buffer: inputBuffer } },
-        { binding: 4, resource: { buffer: outputBuffer } },
-        { binding: 5, resource: { buffer: dequeueStatusBuffer } },
-        { binding: 6, resource: { buffer: paramsBuffer } },
+        { binding: 2, resource: { buffer: inputJobsBuffer } },
+        { binding: 3, resource: { buffer: outputJobsBuffer } },
+        { binding: 4, resource: { buffer: inputPayloadBuffer } },
+        { binding: 5, resource: { buffer: outputPayloadBuffer } },
+        { binding: 6, resource: { buffer: dequeueStatusBuffer } },
+        { binding: 7, resource: { buffer: paramsBuffer } },
       ],
     });
 
@@ -535,9 +552,10 @@ async function init() {
     });
 
     queueBuffers.push(queueBuffer);
-    payloadBuffers.push(payloadBuffer);
-    inputBuffers.push(inputBuffer);
-    outputBuffers.push(outputBuffer);
+    inputJobBuffers.push(inputJobsBuffer);
+    outputJobBuffers.push(outputJobsBuffer);
+    inputPayloadBuffers.push(inputPayloadBuffer);
+    outputPayloadBuffers.push(outputPayloadBuffer);
     enqueueStatusBuffers.push(enqueueStatusBuffer);
     dequeueStatusBuffers.push(dequeueStatusBuffer);
     enqueueBindGroups.push(enqueueBindGroup);
@@ -571,7 +589,7 @@ async function init() {
     for (let imageIndex = 0; imageIndex < imageCount; imageIndex += 1) {
       fillRandomU32(inputPayloadsByImage[imageIndex]);
       seedLineBuffer(inputPayloadsByImage[imageIndex], getFrameSeed(frameIndex, imageIndex));
-      device.queue.writeBuffer(inputBuffers[imageIndex], 0, inputPayloadsByImage[imageIndex]);
+      device.queue.writeBuffer(inputPayloadBuffers[imageIndex], 0, inputPayloadsByImage[imageIndex]);
       device.queue.writeBuffer(enqueueStatusBuffers[imageIndex], 0, zeroStatus);
       device.queue.writeBuffer(dequeueStatusBuffers[imageIndex], 0, zeroStatus);
     }
@@ -601,7 +619,7 @@ async function init() {
 
     for (let imageIndex = 0; imageIndex < imageCount; imageIndex += 1) {
       encoder.copyBufferToBuffer(
-        outputBuffers[imageIndex],
+        outputPayloadBuffers[imageIndex],
         0,
         readbackOutputs[imageIndex],
         0,
@@ -678,7 +696,7 @@ async function init() {
         output,
         dequeueStatus,
         inputPayloadsByImage[imageIndex],
-        payloadStride
+        outputStride
       );
 
       readbackOutputs[imageIndex].unmap();
