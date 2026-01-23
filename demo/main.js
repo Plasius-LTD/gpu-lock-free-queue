@@ -705,8 +705,8 @@ async function init() {
     }
 
     if (frameIndex === 0) {
-      logLine(`Frame 1: Enqueued ${frameEnq} / ${jobsPerImage * imageCount}`);
-      logLine(`Frame 1: Dequeued ${frameDeq} / ${jobsPerImage * imageCount}`);
+      logLine(`Frame 1: Enqueued: ${frameEnq} / ${jobsPerImage * imageCount}`);
+      logLine(`Frame 1: Dequeued: ${frameDeq} / ${jobsPerImage * imageCount}`);
     }
 
     if (renderContinuously) {
