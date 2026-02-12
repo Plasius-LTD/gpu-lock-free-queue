@@ -39,3 +39,23 @@ test("loadQueueWgsl throws on non-ok responses", async () => {
     /Failed to load WGSL \(404 Not Found\)/
   );
 });
+
+test("loadQueueWgsl handles null options via file fallback", async () => {
+  const expected = fs.readFileSync(wgslPath, "utf8");
+  const actual = await loadQueueWgsl(null);
+  assert.strictEqual(actual, expected);
+});
+
+test("loadQueueWgsl reports unknown status shape", async () => {
+  const fakeFetch = async () => ({
+    ok: false,
+    text: async () => "missing",
+  });
+  await assert.rejects(
+    loadQueueWgsl({
+      url: new URL("https://example.invalid/queue.wgsl"),
+      fetcher: fakeFetch,
+    }),
+    /Failed to load WGSL \(unknown\)/
+  );
+});

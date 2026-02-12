@@ -1,6 +1,13 @@
 # @plasius/gpu-lock-free-queue
 
-[![npm version](https://img.shields.io/npm/v/@plasius/gpu-lock-free-queue)](https://www.npmjs.com/package/@plasius/gpu-lock-free-queue)
+[![npm version](https://img.shields.io/npm/v/@plasius/gpu-lock-free-queue.svg)](https://www.npmjs.com/package/@plasius/gpu-lock-free-queue)
+[![Build Status](https://img.shields.io/github/actions/workflow/status/Plasius-LTD/gpu-lock-free-queue/ci.yml?branch=main&label=build&style=flat)](https://github.com/Plasius-LTD/gpu-lock-free-queue/actions/workflows/ci.yml)
+[![coverage](https://img.shields.io/codecov/c/github/Plasius-LTD/gpu-lock-free-queue)](https://codecov.io/gh/Plasius-LTD/gpu-lock-free-queue)
+[![License](https://img.shields.io/github/license/Plasius-LTD/gpu-lock-free-queue)](./LICENSE)
+[![Code of Conduct](https://img.shields.io/badge/code%20of%20conduct-yes-blue.svg)](./CODE_OF_CONDUCT.md)
+[![Security Policy](https://img.shields.io/badge/security%20policy-yes-orange.svg)](./SECURITY.md)
+[![Changelog](https://img.shields.io/badge/changelog-md-blue.svg)](./CHANGELOG.md)
+
 [![CI](https://github.com/Plasius-LTD/gpu-lock-free-queue/actions/workflows/ci.yml/badge.svg)](https://github.com/Plasius-LTD/gpu-lock-free-queue/actions/workflows/ci.yml)
 [![license](https://img.shields.io/npm/l/@plasius/gpu-lock-free-queue)](./LICENSE)
 
