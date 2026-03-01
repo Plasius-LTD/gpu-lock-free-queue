@@ -1,6 +1,6 @@
 {
   "name": "@plasius/gpu-lock-free-queue",
-  "version": "0.2.5",
+  "version": "0.2.6",
   "description": "WebGPU lock-free MPMC ring queue with sequence counters.",
   "type": "module",
   "sideEffects": false,
