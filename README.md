@@ -72,6 +72,16 @@ npm run test:coverage
 npm run test:e2e
 ```
 
+## Development Checks
+
+```sh
+npm run lint
+npm run typecheck
+npm run test:coverage
+npm run build
+npm run pack:check
+```
+
 ## Files
 - `demo/index.html`: Loads the demo.
 - `demo/main.js`: WebGPU setup, enqueue/dequeue test, FFT spectrogram, and randomness heuristics.
