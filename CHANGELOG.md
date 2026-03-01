@@ -20,6 +20,20 @@ The format is based on **[Keep a Changelog](https://keepachangelog.com/en/1.1.0/
 - **Security**
   - (placeholder)
 
+## [0.2.7] - 2026-03-01
+
+- **Added**
+  - (placeholder)
+
+- **Changed**
+  - (placeholder)
+
+- **Fixed**
+  - (placeholder)
+
+- **Security**
+  - (placeholder)
+
 ## [0.2.6] - 2026-03-01
 
 - **Added**
@@ -192,3 +206,4 @@ The format is based on **[Keep a Changelog](https://keepachangelog.com/en/1.1.0/
 [0.2.3]: https://github.com/Plasius-LTD/gpu-lock-free-queue/releases/tag/v0.2.3
 [0.2.4]: https://github.com/Plasius-LTD/gpu-lock-free-queue/releases/tag/v0.2.4
 [0.2.6]: https://github.com/Plasius-LTD/gpu-lock-free-queue/releases/tag/v0.2.6
+[0.2.7]: https://github.com/Plasius-LTD/gpu-lock-free-queue/releases/tag/v0.2.7
