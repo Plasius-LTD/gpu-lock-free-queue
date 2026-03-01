@@ -244,7 +244,7 @@ jobs:
 
       - name: Create GitHub Release from tag (first-party)
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
           TAG="${{ steps.pkg.outputs.tag }}"
