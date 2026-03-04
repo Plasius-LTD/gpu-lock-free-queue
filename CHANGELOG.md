@@ -20,6 +20,76 @@ The format is based on **[Keep a Changelog](https://keepachangelog.com/en/1.1.0/
 - **Security**
   - (placeholder)
 
+## [0.2.8] - 2026-03-01
+
+- **Added**
+  - (placeholder)
+
+- **Changed**
+  - (placeholder)
+
+- **Fixed**
+  - (placeholder)
+
+- **Security**
+  - (placeholder)
+
+## [0.2.7] - 2026-03-01
+
+- **Added**
+  - (placeholder)
+
+- **Changed**
+  - (placeholder)
+
+- **Fixed**
+  - (placeholder)
+
+- **Security**
+  - (placeholder)
+
+## [0.2.6] - 2026-03-01
+
+- **Added**
+  - (placeholder)
+
+- **Changed**
+  - (placeholder)
+
+- **Fixed**
+  - (placeholder)
+
+- **Security**
+  - (placeholder)
+
+## [0.2.4] - 2026-03-01
+
+- **Added**
+  - (placeholder)
+
+- **Changed**
+  - (placeholder)
+
+- **Fixed**
+  - (placeholder)
+
+- **Security**
+  - (placeholder)
+
+## [0.2.3] - 2026-03-01
+
+- **Added**
+  - `lint`, `typecheck`, and security audit scripts for local and CI enforcement.
+
+- **Changed**
+  - CI now fails early on lint/typecheck/runtime dependency audit before build/test.
+
+- **Fixed**
+  - Pack-check regex cleanup to remove an unnecessary path escape.
+
+- **Security**
+  - Runtime dependency vulnerability checks are now enforced in CI.
+
 ## [0.2.2] - 2026-02-28
 
 - **Added**
@@ -147,3 +217,8 @@ The format is based on **[Keep a Changelog](https://keepachangelog.com/en/1.1.0/
 - **Security**
   - (placeholder)
 [0.2.2]: https://github.com/Plasius-LTD/gpu-lock-free-queue/releases/tag/v0.2.2
+[0.2.3]: https://github.com/Plasius-LTD/gpu-lock-free-queue/releases/tag/v0.2.3
+[0.2.4]: https://github.com/Plasius-LTD/gpu-lock-free-queue/releases/tag/v0.2.4
+[0.2.6]: https://github.com/Plasius-LTD/gpu-lock-free-queue/releases/tag/v0.2.6
+[0.2.7]: https://github.com/Plasius-LTD/gpu-lock-free-queue/releases/tag/v0.2.7
+[0.2.8]: https://github.com/Plasius-LTD/gpu-lock-free-queue/releases/tag/v0.2.8

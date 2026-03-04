@@ -243,8 +243,9 @@ jobs:
           git push --follow-tags
 
       - name: Create GitHub Release from tag (first-party)
+        continue-on-error: true
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
           TAG="${{ steps.pkg.outputs.tag }}"
