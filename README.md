@@ -11,7 +11,8 @@
 [![CI](https://github.com/Plasius-LTD/gpu-lock-free-queue/actions/workflows/ci.yml/badge.svg)](https://github.com/Plasius-LTD/gpu-lock-free-queue/actions/workflows/ci.yml)
 [![license](https://img.shields.io/npm/l/@plasius/gpu-lock-free-queue)](./LICENSE)
 
-A minimal WebGPU lock-free MPMC ring queue using a per-slot sequence counter (Vyukov-style). This is a starter implementation focused on correctness, robustness, and low overhead.
+A WebGPU lock-free queue package that now ships both a flat MPMC ring queue and
+a DAG-ready scheduler asset with dependency-aware ready lanes.
 
 Apache-2.0. ESM + CJS builds. WGSL assets are published in `dist/`.
 
@@ -29,10 +30,38 @@ const shaderCode = await loadQueueWgsl();
 // const shaderCode = await fetch(queueWgslUrl).then((res) => res.text());
 ```
 
+```js
+import {
+  createDagJobGraph,
+  loadDagQueueWgsl,
+  loadSchedulerWgsl,
+} from "@plasius/gpu-lock-free-queue";
+
+const graph = createDagJobGraph([
+  { id: "g-buffer", priority: 4 },
+  { id: "shadow", priority: 3 },
+  { id: "lighting", dependencies: ["g-buffer", "shadow"], priority: 2 },
+]);
+
+const dagSchedulerWgsl = await loadDagQueueWgsl();
+const selectedWgsl = await loadSchedulerWgsl({ mode: graph.mode });
+```
+
 ## What this is
 - Lock-free multi-producer, multi-consumer ring queue on the GPU.
+- Multi-root DAG-ready scheduler asset with priority-aware ready queues.
 - Uses per-slot sequence numbers to avoid ABA for slots within a 32-bit epoch.
 - Fixed-size job metadata with payload offsets into a caller-managed data arena or buffer.
+
+## Scheduler assets
+
+- `queue.wgsl`: flat lock-free ring queue, compatible with the original worker runtime.
+- `dag-queue.wgsl`: dependency-aware scheduler asset with multi-root publishing,
+  priority ready lanes, and downstream unlock hooks via `complete_job(...)`.
+
+Both assets remain lock-free. Workers pop runnable jobs without blocking, and
+DAG jobs unlock downstream work via atomics when their dependency count reaches
+zero.
 
 ## Buffer layout (breaking change in v0.4.0)
 Bindings are:
@@ -50,7 +79,8 @@ Bindings are:
 ## Limitations
 - Sequence counters are 32-bit. At extreme throughput over a long time, counters wrap and ABA can reappear. If you need true long-running safety, consider a reset protocol, sharding, or a future 64-bit atomic extension.
 - Payload lifetimes are managed by the caller. Ensure payload buffers remain valid until consumers finish, or use frame-bounded arenas/generation handles.
-- This demo is intentionally minimal; it is not yet integrated with a scheduler or backpressure policy.
+- The DAG scheduler asset introduces extra buffers for job state and dependency
+  lists; callers still need to build/upload those buffers explicitly.
 
 ## Run the demo
 WebGPU requires a secure context. Use a local server, for example:
@@ -63,7 +93,8 @@ Then open `http://localhost:8000` and check the console/output.
 
 ## Build Outputs
 
-`npm run build` emits `dist/index.js`, `dist/index.cjs`, and `dist/queue.wgsl`.
+`npm run build` emits `dist/index.js`, `dist/index.cjs`, `dist/queue.wgsl`, and
+`dist/dag-queue.wgsl`.
 
 ## Tests
 ```
@@ -85,8 +116,15 @@ npm run pack:check
 ## Files
 - `demo/index.html`: Loads the demo.
 - `demo/main.js`: WebGPU setup, enqueue/dequeue test, FFT spectrogram, and randomness heuristics.
-- `src/queue.wgsl`: Lock-free queue implementation.
-- `src/index.js`: Package entry point for loading the WGSL file.
+- `src/queue.wgsl`: Flat lock-free queue implementation.
+- `src/dag-queue.wgsl`: DAG-ready scheduler implementation.
+- `src/index.js`: Package entry point for loading scheduler assets and normalizing DAG graphs.
+
+## Architecture Docs
+
+- `docs/adrs/adr-0004-multi-root-dag-ready-queues.md`
+- `docs/tdrs/tdr-0001-dag-scheduler-contract.md`
+- `docs/design/dag-scheduler-design.md`
 
 ## Payload shape
 Payloads are variable-length chunks stored in a caller-managed buffer. Each job specifies `job_type`, `payload_offset`, and `payload_words` in `input_jobs`; dequeue copies payloads from `input_payloads` into `output_payloads` using `output_stride` and mirrors the metadata into `output_jobs`. If you need `f32`, store `bitcast<u32>(value)` and reinterpret on the consumer side.

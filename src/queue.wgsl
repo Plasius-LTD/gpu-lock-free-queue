@@ -73,6 +73,10 @@ fn queue_len() -> u32 {
   return t - h;
 }
 
+fn complete_job(job_index: u32) {
+  _ = job_index;
+}
+
 fn enqueue(idx: u32) -> u32 {
   let job = input_jobs[idx];
   let payload_words = job.payload_words;

@@ -1,7 +1,7 @@
 {
   "name": "@plasius/gpu-lock-free-queue",
   "version": "0.2.12",
-  "description": "WebGPU lock-free MPMC ring queue with sequence counters.",
+  "description": "WebGPU lock-free queue assets for flat and DAG-ready GPU job scheduling.",
   "type": "module",
   "sideEffects": false,
   "private": false,
@@ -21,10 +21,11 @@
       "require": "./dist/index.cjs"
     },
     "./queue.wgsl": "./dist/queue.wgsl",
+    "./dag-queue.wgsl": "./dist/dag-queue.wgsl",
     "./package.json": "./package.json"
   },
   "scripts": {
-    "build": "tsup && cp src/queue.wgsl dist/queue.wgsl",
+    "build": "tsup && cp src/queue.wgsl dist/queue.wgsl && cp src/dag-queue.wgsl dist/dag-queue.wgsl",
     "demo": "python3 -m http.server",
     "typecheck": "node --check src/index.js",
     "audit:eslint": "eslint . --max-warnings=0",

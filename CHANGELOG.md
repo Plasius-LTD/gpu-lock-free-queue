@@ -9,10 +9,15 @@ The format is based on **[Keep a Changelog](https://keepachangelog.com/en/1.1.0/
 ## [Unreleased]
 
 - **Added**
-  - (placeholder)
+  - Added `dag-queue.wgsl` for multi-root DAG-ready scheduling with priority
+    ready lanes and dependency unlock hooks.
+  - Added `loadDagQueueWgsl(...)`, `loadSchedulerWgsl(...)`, and
+    `createDagJobGraph(...)`.
+  - Added ADR, TDR, and design docs for DAG scheduler rollout.
 
 - **Changed**
-  - (placeholder)
+  - `queue.wgsl` now exports a no-op `complete_job(...)` hook so worker code can
+    target flat and DAG scheduler assets through one lifecycle contract.
 
 - **Fixed**
   - (placeholder)

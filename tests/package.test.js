@@ -13,6 +13,7 @@ const wgslPath = path.resolve(projectRoot, "src", "queue.wgsl");
 
 test("queue WGSL file exists", () => {
   assert.ok(fs.existsSync(wgslPath));
+  assert.ok(fs.existsSync(path.resolve(projectRoot, "src", "dag-queue.wgsl")));
 });
 
 test("queueWgslUrl points at queue.wgsl", () => {
@@ -32,6 +33,7 @@ test("queue WGSL contains required bindings", () => {
   assert.ok(wgsl.includes("@group(0) @binding(7)"));
   assert.ok(wgsl.includes("enqueue_main"));
   assert.ok(wgsl.includes("dequeue_main"));
+  assert.ok(wgsl.includes("complete_job"));
 });
 
 test("queue WGSL defines expected queue fields", () => {
@@ -69,4 +71,17 @@ test("queue WGSL bounds job count to buffer lengths", () => {
   assert.ok(wgsl.includes("arrayLength(&output_jobs)"));
   assert.ok(wgsl.includes("arrayLength(&output_payloads)"));
   assert.ok(wgsl.includes("arrayLength(&status)"));
+});
+
+test("dag queue WGSL exposes ready queues and dependency completion helpers", () => {
+  const wgsl = fs.readFileSync(
+    path.resolve(projectRoot, "src", "dag-queue.wgsl"),
+    "utf8"
+  );
+
+  assert.ok(wgsl.includes("struct ReadyQueue"));
+  assert.ok(wgsl.includes("struct JobNode"));
+  assert.ok(wgsl.includes("fn ready_queue_index"));
+  assert.ok(wgsl.includes("fn complete_job"));
+  assert.ok(wgsl.includes("priority_step"));
 });
