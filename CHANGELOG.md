@@ -9,6 +9,20 @@ The format is based on **[Keep a Changelog](https://keepachangelog.com/en/1.1.0/
 ## [Unreleased]
 
 - **Added**
+  - (placeholder)
+
+- **Changed**
+  - (placeholder)
+
+- **Fixed**
+  - (placeholder)
+
+- **Security**
+  - (placeholder)
+
+## [0.2.13] - 2026-03-13
+
+- **Added**
   - Added `dag-queue.wgsl` for multi-root DAG-ready scheduling with priority
     ready lanes and dependency unlock hooks.
   - Added `loadDagQueueWgsl(...)`, `loadSchedulerWgsl(...)`, and
@@ -242,3 +256,4 @@ The format is based on **[Keep a Changelog](https://keepachangelog.com/en/1.1.0/
 [0.2.7]: https://github.com/Plasius-LTD/gpu-lock-free-queue/releases/tag/v0.2.7
 [0.2.8]: https://github.com/Plasius-LTD/gpu-lock-free-queue/releases/tag/v0.2.8
 [0.2.12]: https://github.com/Plasius-LTD/gpu-lock-free-queue/releases/tag/v0.2.12
+[0.2.13]: https://github.com/Plasius-LTD/gpu-lock-free-queue/releases/tag/v0.2.13
