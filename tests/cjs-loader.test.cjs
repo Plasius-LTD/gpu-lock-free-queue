@@ -75,4 +75,27 @@ test("CJS createDagJobGraph exposes roots and order", () => {
 
   assert.deepEqual(graph.roots, ["root-a", "root-b"]);
   assert.deepEqual(graph.topologicalOrder, ["root-a", "root-b", "join"]);
+  assert.deepEqual(graph.priorityLanes, [
+    {
+      priority: 2,
+      jobIds: ["root-a"],
+      rootJobIds: ["root-a"],
+      jobCount: 1,
+      rootCount: 1,
+    },
+    {
+      priority: 1,
+      jobIds: ["root-b"],
+      rootJobIds: ["root-b"],
+      jobCount: 1,
+      rootCount: 1,
+    },
+    {
+      priority: 0,
+      jobIds: ["join"],
+      rootJobIds: [],
+      jobCount: 1,
+      rootCount: 0,
+    },
+  ]);
 });

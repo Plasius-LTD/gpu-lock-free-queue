@@ -101,10 +101,49 @@ test("createDagJobGraph normalizes roots, dependents, and topological order", ()
     "lighting",
     "composite",
   ]);
+  assert.deepEqual(graph.jobIds, [
+    "g-buffer",
+    "shadow",
+    "lighting",
+    "composite",
+  ]);
+  assert.deepEqual(graph.priorityLanes, [
+    {
+      priority: 4,
+      jobIds: ["g-buffer"],
+      rootJobIds: ["g-buffer"],
+      jobCount: 1,
+      rootCount: 1,
+    },
+    {
+      priority: 3,
+      jobIds: ["shadow"],
+      rootJobIds: ["shadow"],
+      jobCount: 1,
+      rootCount: 1,
+    },
+    {
+      priority: 2,
+      jobIds: ["lighting"],
+      rootJobIds: [],
+      jobCount: 1,
+      rootCount: 0,
+    },
+    {
+      priority: 1,
+      jobIds: ["composite"],
+      rootJobIds: [],
+      jobCount: 1,
+      rootCount: 0,
+    },
+  ]);
 
   const lighting = graph.jobs.find((job) => job.id === "lighting");
   assert.deepEqual(lighting.dependencies, ["g-buffer", "shadow"]);
   assert.deepEqual(lighting.dependents, ["composite"]);
+  assert.equal(lighting.dependencyCount, 2);
+  assert.equal(lighting.unresolvedDependencyCount, 2);
+  assert.equal(lighting.dependentCount, 1);
 });
 
 test("createDagJobGraph rejects invalid dependency graphs", () => {

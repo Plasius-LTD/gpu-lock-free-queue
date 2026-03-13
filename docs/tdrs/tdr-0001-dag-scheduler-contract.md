@@ -22,6 +22,9 @@ builds buffers for the DAG scheduler asset.
 ## Implementation Notes
 
 - `createDagJobGraph(...)` validates ids, dependencies, and cycles.
+- `createDagJobGraph(...)` also derives roots, dependents, dependency counts,
+  and `priorityLanes` so callers can upload multi-root ready queues without
+  reinventing graph normalization.
 - `loadSchedulerWgsl({ mode })` selects flat or DAG assets.
 - `complete_job(...)` exists in both modes so worker code can target a shared
   completion lifecycle.

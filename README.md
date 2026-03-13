@@ -43,6 +43,8 @@ const graph = createDagJobGraph([
   { id: "lighting", dependencies: ["g-buffer", "shadow"], priority: 2 },
 ]);
 
+console.log(graph.roots);
+console.log(graph.priorityLanes);
 const dagSchedulerWgsl = await loadDagQueueWgsl();
 const selectedWgsl = await loadSchedulerWgsl({ mode: graph.mode });
 ```
@@ -62,6 +64,16 @@ const selectedWgsl = await loadSchedulerWgsl({ mode: graph.mode });
 Both assets remain lock-free. Workers pop runnable jobs without blocking, and
 DAG jobs unlock downstream work via atomics when their dependency count reaches
 zero.
+
+The JS graph helper is the canonical preflight contract for DAG metadata. It
+returns:
+
+- `jobIds` for stable upload order
+- `roots` for the initial runnable set
+- `topologicalOrder` for validation and planning
+- `priorityLanes` so callers can size ready queues per priority bucket
+- per-job `dependencies`, `dependents`, `dependencyCount`,
+  `unresolvedDependencyCount`, and `dependentCount`
 
 ## Buffer layout (breaking change in v0.4.0)
 Bindings are:

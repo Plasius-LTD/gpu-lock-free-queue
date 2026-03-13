@@ -25,7 +25,8 @@ queue.
 - Publish roots through `enqueue_main`.
 - Unlock downstream jobs through `complete_job(...)` when a worker finishes.
 - Add JS helpers that normalize DAG metadata before it is uploaded to GPU
-  buffers.
+  buffers, including root detection, dependent lists, and priority-lane
+  summaries.
 
 ## Consequences
 

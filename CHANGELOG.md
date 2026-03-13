@@ -9,10 +9,13 @@ The format is based on **[Keep a Changelog](https://keepachangelog.com/en/1.1.0/
 ## [Unreleased]
 
 - **Added**
-  - (placeholder)
+  - `createDagJobGraph(...)` now derives `priorityLanes`, `jobIds`,
+    `unresolvedDependencyCount`, and `dependentCount` so host code can size
+    multi-root ready queues and inspect dependency fan-out directly.
 
 - **Changed**
-  - (placeholder)
+  - DAG scheduler docs now describe the host-side graph contract in the same
+    terms as the GPU ready-queue implementation.
 
 - **Fixed**
   - (placeholder)

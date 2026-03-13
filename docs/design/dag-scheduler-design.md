@@ -16,6 +16,16 @@ Each DAG job node carries:
 - dependency count
 - offsets into a dependent list
 
+The package-level JS graph helper mirrors that contract in host code and now
+returns:
+
+- stable `jobIds`
+- initial `roots`
+- `topologicalOrder`
+- `priorityLanes`
+- per-job `dependents`, `dependencyCount`, `unresolvedDependencyCount`, and
+  `dependentCount`
+
 Each runtime job state carries:
 
 - unresolved dependency counter
@@ -30,6 +40,12 @@ Each runtime job state carries:
 4. `complete_job(...)` decrements unresolved counts on downstream jobs.
 5. Any downstream job that reaches zero unresolved dependencies is atomically
    pushed into the appropriate ready queue.
+
+## Priority Lanes
+
+The queue asset maps priorities to ready queues. The host-side graph helper
+surfaces `priorityLanes` so callers can size buffers and seed multiple root
+jobs into the correct ready queues without recomputing the graph structure.
 
 ## Compatibility
 

@@ -66,6 +66,37 @@ function resolveGraphJobId(job, index) {
   return assertIdentifier(`jobs[${index}].id`, `job-${index}`);
 }
 
+function buildPriorityLanes(graphJobs) {
+  const lanes = new Map();
+
+  for (const job of graphJobs) {
+    const lane = lanes.get(job.priority) ?? {
+      priority: job.priority,
+      jobIds: [],
+      rootJobIds: [],
+    };
+    lane.jobIds.push(job.id);
+    if (job.root) {
+      lane.rootJobIds.push(job.id);
+    }
+    lanes.set(job.priority, lane);
+  }
+
+  return Object.freeze(
+    [...lanes.values()]
+      .sort((left, right) => right.priority - left.priority)
+      .map((lane) =>
+        Object.freeze({
+          priority: lane.priority,
+          jobIds: Object.freeze([...lane.jobIds]),
+          rootJobIds: Object.freeze([...lane.rootJobIds]),
+          jobCount: lane.jobIds.length,
+          rootCount: lane.rootJobIds.length,
+        })
+      )
+  );
+}
+
 async function loadWgslAsset(assetUrl, options = {}) {
   const { url = assetUrl, fetcher = globalThis.fetch } = options ?? {};
   const wgslUrl = url instanceof URL ? url : new URL(url, assetUrl);
@@ -193,16 +224,22 @@ function createDagJobGraph(jobs = []) {
       dependencies: Object.freeze([...job.dependencies]),
       dependents: Object.freeze([...(dependentsById.get(job.id) ?? [])]),
       dependencyCount: job.dependencies.length,
+      unresolvedDependencyCount: job.dependencies.length,
+      dependentCount: (dependentsById.get(job.id) ?? []).length,
       root: job.dependencies.length === 0,
     })
   );
+
+  const priorityLanes = buildPriorityLanes(graphJobs);
 
   return Object.freeze({
     mode: "dag",
     jobCount: graphJobs.length,
     maxPriority,
+    jobIds: Object.freeze(graphJobs.map((job) => job.id)),
     roots: Object.freeze(graphJobs.filter((job) => job.root).map((job) => job.id)),
     topologicalOrder: Object.freeze(topo),
+    priorityLanes,
     jobs: Object.freeze(graphJobs),
   });
 }
