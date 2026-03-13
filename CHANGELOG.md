@@ -26,6 +26,20 @@ The format is based on **[Keep a Changelog](https://keepachangelog.com/en/1.1.0/
   - (placeholder)
 
 - **Changed**
+  - (placeholder)
+
+- **Fixed**
+  - (placeholder)
+
+- **Security**
+  - (placeholder)
+
+## [0.2.13] - 2026-03-13
+
+- **Added**
+  - (placeholder)
+
+- **Changed**
   - Git-based installs now run `prepare` so built `dist/` assets exist when
     downstream packages pin the queue repo directly.
 
