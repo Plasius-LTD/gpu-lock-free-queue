@@ -9,6 +9,20 @@ The format is based on **[Keep a Changelog](https://keepachangelog.com/en/1.1.0/
 ## [Unreleased]
 
 - **Added**
+  - (placeholder)
+
+- **Changed**
+  - (placeholder)
+
+- **Fixed**
+  - (placeholder)
+
+- **Security**
+  - (placeholder)
+
+## [0.2.14] - 2026-03-14
+
+- **Added**
   - `createDagJobGraph(...)` now derives `priorityLanes`, `jobIds`,
     `unresolvedDependencyCount`, and `dependentCount` so host code can size
     multi-root ready queues and inspect dependency fan-out directly.
@@ -292,3 +306,4 @@ The format is based on **[Keep a Changelog](https://keepachangelog.com/en/1.1.0/
 [0.2.8]: https://github.com/Plasius-LTD/gpu-lock-free-queue/releases/tag/v0.2.8
 [0.2.12]: https://github.com/Plasius-LTD/gpu-lock-free-queue/releases/tag/v0.2.12
 [0.2.13]: https://github.com/Plasius-LTD/gpu-lock-free-queue/releases/tag/v0.2.13
+[0.2.14]: https://github.com/Plasius-LTD/gpu-lock-free-queue/releases/tag/v0.2.14
