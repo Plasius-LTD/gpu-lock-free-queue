@@ -95,13 +95,20 @@ Bindings are:
   lists; callers still need to build/upload those buffers explicitly.
 
 ## Run the demo
-WebGPU requires a secure context. Use a local server, for example:
+Run the demo server from the package root:
 
-```
-python3 -m http.server
+```sh
+cd gpu-lock-free-queue
+npm run demo
 ```
 
-Then open `http://localhost:8000` and check the console/output.
+Then open `http://localhost:8000/demo/`.
+
+The demo mounts the shared `@plasius/gpu-shared` 3D harbor surface and uses the
+queue package's DAG graph to drive visible scene behavior. Root jobs, priority
+lanes, dependency joins, and stress-mode graph expansion all stay visible in
+context while `@plasius/gpu-lock-free-queue` continues to own the scheduling
+contract instead of a package-local 2D validation surface.
 
 ## Build Outputs
 
@@ -127,7 +134,8 @@ npm run pack:check
 
 ## Files
 - `demo/index.html`: Loads the demo.
-- `demo/main.js`: WebGPU setup, enqueue/dequeue test, FFT spectrogram, and randomness heuristics.
+- `demo/main.js`: Shared 3D harbor validation scene driven by DAG queue roots,
+  priority lanes, and dependency joins.
 - `src/queue.wgsl`: Flat lock-free queue implementation.
 - `src/dag-queue.wgsl`: DAG-ready scheduler implementation.
 - `src/index.js`: Package entry point for loading scheduler assets and normalizing DAG graphs.

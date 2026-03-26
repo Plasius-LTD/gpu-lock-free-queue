@@ -9,13 +9,16 @@ The format is based on **[Keep a Changelog](https://keepachangelog.com/en/1.1.0/
 ## [Unreleased]
 
 - **Added**
-  - (placeholder)
+  - Contract tests that keep the demo on the public `@plasius/gpu-shared`
+    browser import surface.
 
 - **Changed**
-  - (placeholder)
+  - Updated the README to describe the live 3D queue-driven validation scene
+    and visible DAG scheduler state correctly.
 
 - **Fixed**
-  - (placeholder)
+  - Removed the demo's deep import of `@plasius/gpu-shared` internals in favor
+    of an import-map-backed package import.
 
 - **Security**
   - (placeholder)

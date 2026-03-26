@@ -85,3 +85,25 @@ test("dag queue WGSL exposes ready queues and dependency completion helpers", ()
   assert.ok(wgsl.includes("fn complete_job"));
   assert.ok(wgsl.includes("priority_step"));
 });
+
+test("demo imports gpu-shared through the public package surface", () => {
+  const demoSource = fs.readFileSync(path.resolve(projectRoot, "demo", "main.js"), "utf8");
+  const demoHtml = fs.readFileSync(path.resolve(projectRoot, "demo", "index.html"), "utf8");
+
+  assert.match(demoSource, /from "@plasius\/gpu-shared"/);
+  assert.doesNotMatch(demoSource, /node_modules\/@plasius\/gpu-shared\/dist/);
+  assert.match(demoHtml, /<script type="importmap">/);
+  assert.match(
+    demoHtml,
+    /"@plasius\/gpu-shared"\s*:\s*"\.\.\/node_modules\/@plasius\/gpu-shared\/dist\/index\.js"/,
+  );
+});
+
+test("README documents the live 3D queue validation demo", () => {
+  const readme = fs.readFileSync(path.resolve(projectRoot, "README.md"), "utf8");
+
+  assert.match(readme, /mounts the shared `@plasius\/gpu-shared` 3D harbor surface/i);
+  assert.match(readme, /Root jobs, priority\s+lanes, dependency joins, and stress-mode graph expansion/i);
+  assert.doesNotMatch(readme, /FFT spectrogram/i);
+  assert.doesNotMatch(readme, /Then open `http:\/\/localhost:8000` and check the console\/output/i);
+});
