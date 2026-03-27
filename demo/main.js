@@ -90,7 +90,7 @@ function describeState(state, scene) {
     notes: [
       "The 3D harbor is shared, but the queue package still owns the DAG graph and priority-lane contract shown here.",
       "Stress mode inserts an extra denoise dependency so the lane and join behavior changes visibly.",
-      "This keeps the demo aligned with the real multi-root, priority-aware queue direction.",
+      "This keeps the demo aligned with the real multi-root, priority-aware queue direction while the harbor keeps its living-painting night read.",
     ],
     textState: {
       jobIds: state.graph.jobIds,
@@ -112,7 +112,7 @@ await mountGpuShowcase({
   packageName: "@plasius/gpu-lock-free-queue",
   title: "Priority DAG Queue Harbor Validation",
   subtitle:
-    "A shared 3D harbor scene driven by gpu-lock-free-queue DAG roots, dependency joins, and priority lanes.",
+    "A moonlit shared harbor scene driven by gpu-lock-free-queue DAG roots, dependency joins, and priority lanes.",
   createState,
   updateState,
   describeState,
