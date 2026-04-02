@@ -9,6 +9,20 @@ The format is based on **[Keep a Changelog](https://keepachangelog.com/en/1.1.0/
 ## [Unreleased]
 
 - **Added**
+  - (placeholder)
+
+- **Changed**
+  - (placeholder)
+
+- **Fixed**
+  - (placeholder)
+
+- **Security**
+  - (placeholder)
+
+## [0.2.16] - 2026-04-02
+
+- **Added**
   - Contract tests that keep the demo on the public `@plasius/gpu-shared`
     browser import surface.
 
@@ -325,3 +339,4 @@ The format is based on **[Keep a Changelog](https://keepachangelog.com/en/1.1.0/
 [0.2.13]: https://github.com/Plasius-LTD/gpu-lock-free-queue/releases/tag/v0.2.13
 [0.2.14]: https://github.com/Plasius-LTD/gpu-lock-free-queue/releases/tag/v0.2.14
 [0.2.15]: https://github.com/Plasius-LTD/gpu-lock-free-queue/releases/tag/v0.2.15
+[0.2.16]: https://github.com/Plasius-LTD/gpu-lock-free-queue/releases/tag/v0.2.16
