@@ -117,10 +117,16 @@ contract instead of a package-local 2D validation surface.
 
 ## Tests
 ```
+npm run test:e2e:setup
 npm run test:unit
 npm run test:coverage
 npm run test:e2e
+REQUIRE_WEBGPU_VALIDATION=true npm run test:wgsl
 ```
+
+`npm run test:wgsl` is the blocking browser-runtime shader validation command
+used by CI. It fails closed when the runner cannot expose the required WebGPU
+validation path.
 
 ## Development Checks
 

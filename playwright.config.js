@@ -6,7 +6,7 @@ export default defineConfig({
   use: {
     baseURL: "http://127.0.0.1:4173",
     launchOptions: {
-      args: ["--enable-unsafe-webgpu"],
+      args: ["--enable-unsafe-webgpu", "--use-angle=swiftshader"],
     },
   },
 });
