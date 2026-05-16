@@ -15,7 +15,7 @@ The format is based on **[Keep a Changelog](https://keepachangelog.com/en/1.1.0/
   - (placeholder)
 
 - **Fixed**
-  - (placeholder)
+  - Made WGSL browser-runtime validation a CI-enforced gate so shader compilation can no longer pass only through a locally skipped Playwright path.
 
 - **Security**
   - (placeholder)

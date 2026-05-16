@@ -9,6 +9,7 @@ const __dirname = path.dirname(__filename);
 const projectRoot = path.resolve(__dirname, "..");
 const testPatternSeed = 23;
 const testPatternHash = "93c113f5";
+const requireWebGpuValidation = process.env.REQUIRE_WEBGPU_VALIDATION === "true";
 
 function createStaticServer(rootDir) {
   return http.createServer((req, res) => {
@@ -117,6 +118,11 @@ test.describe("demo", () => {
     await page.goto(`${baseUrl}/demo/index.html`);
     const hasGpu = await page.evaluate(() => Boolean(navigator.gpu));
     if (!hasGpu) {
+      if (requireWebGpuValidation) {
+        throw new Error(
+          "WebGPU validation is required for this run, but navigator.gpu is unavailable."
+        );
+      }
       test.skip(true, "WebGPU not available");
     }
 
@@ -136,6 +142,11 @@ test.describe("demo", () => {
     });
 
     if (!result.ok && result.reason === "no-adapter") {
+      if (requireWebGpuValidation) {
+        throw new Error(
+          "WebGPU validation is required for this run, but no suitable GPU adapter was available."
+        );
+      }
       test.skip(true, "No suitable GPU adapter found");
     }
     expect(result.errors).toEqual([]);
