@@ -58,13 +58,13 @@
   "author": "Plasius LTD <development@plasius.co.uk>",
   "license": "Apache-2.0",
   "dependencies": {
-    "@plasius/gpu-shared": "^0.1.9"
+    "@plasius/gpu-shared": "^1.0.2"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
-    "@playwright/test": "^1.60.0",
+    "@playwright/test": "^1.61.1",
     "c8": "^11.0.0",
-    "eslint": "^10.3.0",
+    "eslint": "^10.6.0",
     "globals": "^17.6.0",
     "tsup": "^8.5.1",
     "typescript": "^6.0.3"
