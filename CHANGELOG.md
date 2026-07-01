@@ -12,6 +12,20 @@ The format is based on **[Keep a Changelog](https://keepachangelog.com/en/1.1.0/
   - (placeholder)
 
 - **Changed**
+  - (placeholder)
+
+- **Fixed**
+  - (placeholder)
+
+- **Security**
+  - (placeholder)
+
+## [0.3.3] - 2026-07-01
+
+- **Added**
+  - (placeholder)
+
+- **Changed**
   - Refreshed the published dependency baseline to `@plasius/gpu-shared@^1.0.2`, `@playwright/test@^1.61.1`, and `eslint@^10.6.0`.
 
 - **Fixed**
@@ -400,3 +414,4 @@ The format is based on **[Keep a Changelog](https://keepachangelog.com/en/1.1.0/
 [0.2.18]: https://github.com/Plasius-LTD/gpu-lock-free-queue/releases/tag/v0.2.18
 [0.3.1]: https://github.com/Plasius-LTD/gpu-lock-free-queue/releases/tag/v0.3.1
 [0.3.2]: https://github.com/Plasius-LTD/gpu-lock-free-queue/releases/tag/v0.3.2
+[0.3.3]: https://github.com/Plasius-LTD/gpu-lock-free-queue/releases/tag/v0.3.3
