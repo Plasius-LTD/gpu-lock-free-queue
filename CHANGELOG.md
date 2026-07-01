@@ -12,7 +12,7 @@ The format is based on **[Keep a Changelog](https://keepachangelog.com/en/1.1.0/
   - (placeholder)
 
 - **Changed**
-  - (placeholder)
+  - Refreshed the published dependency baseline to `@plasius/gpu-shared@^1.0.2`, `@playwright/test@^1.61.1`, and `eslint@^10.6.0`.
 
 - **Fixed**
   - (placeholder)
