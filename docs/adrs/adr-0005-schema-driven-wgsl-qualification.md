@@ -35,6 +35,11 @@ checked-in output is stale, an entry point is omitted, a fixture is invalid, or
 any WGSL file under `src/` or `demo/` is not assigned to a compile unit.
 
 CI requires Chromium SwiftShader without skips for deterministic feedback.
+Chromium is launched with explicit Vulkan, SwiftShader Vulkan, and
+`--use-webgpu-adapter=swiftshader` selection. The qualification test verifies
+those effective browser arguments through the DevTools protocol and requires
+the selected WebGPU adapter to expose its fallback-adapter marker before the
+result can pass.
 `shader:evidence` separately admits only complete, digest-bound, passing
 evidence for the flat, demo, and DAG bundles across every declared physical
 matrix cell. Missing runners, skips, timeouts, device loss, or stale evidence

@@ -27,7 +27,7 @@
   "scripts": {
     "build": "npm run shader:contracts && tsup && cp src/queue.wgsl dist/queue.wgsl && cp src/dag-queue.wgsl dist/dag-queue.wgsl && node scripts/generate-shader-contracts.mjs --copy-dist",
     "demo": "python3 -m http.server",
-    "typecheck": "node --check src/index.js && node --check demo/main.js && node --check scripts/generate-shader-contracts.mjs && node --check scripts/validate-shader-evidence.mjs && node --check tests/shader-qualification.e2e.spec.js",
+    "typecheck": "node --check src/index.js && node --check demo/main.js && node --check scripts/generate-shader-contracts.mjs && node --check scripts/swiftshader-qualification.mjs && node --check scripts/validate-shader-evidence.mjs && node --check tests/shader-qualification.e2e.spec.js",
     "audit:eslint": "eslint . --max-warnings=0",
     "audit:deps": "npm ls --all --omit=optional --omit=peer > /dev/null 2>&1 || true",
     "audit:npm": "npm audit --audit-level=low",

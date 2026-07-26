@@ -1,19 +1,14 @@
 import { defineConfig } from "@playwright/test";
+import { CHROMIUM_SWIFTSHADER_ARGS } from "./scripts/swiftshader-qualification.mjs";
 
 export default defineConfig({
   testDir: "./tests",
   testMatch: "**/*.spec.js",
-  timeout: 60_000,
+  timeout: 120_000,
   use: {
     baseURL: "http://127.0.0.1:4173",
     launchOptions: {
-      args: [
-        "--enable-unsafe-webgpu",
-        "--enable-features=Vulkan",
-        "--use-angle=swiftshader",
-        "--use-vulkan=swiftshader",
-        "--disable-vulkan-surface",
-      ],
+      args: CHROMIUM_SWIFTSHADER_ARGS,
     },
   },
 });

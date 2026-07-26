@@ -18,6 +18,7 @@ The format is based on **[Keep a Changelog](https://keepachangelog.com/en/1.1.0/
   - (placeholder)
 
 - **Fixed**
+  - Made Chromium SwiftShader qualification select the WebGPU adapter explicitly and verify the effective browser command line plus fallback-adapter identity.
   - (placeholder)
 
 - **Security**

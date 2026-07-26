@@ -133,7 +133,10 @@ used by CI. It compiles `src/queue.wgsl`, `demo/queue.wgsl`, and
 `src/dag-queue.wgsl` through `GPUShaderModule.getCompilationInfo()`, creates
 their explicit pipeline and bind-group layouts, dispatches both entry points,
 and verifies bounded semantic readback. It fails closed when the runner cannot
-select SwiftShader or expose the required WebGPU validation path.
+select SwiftShader or expose the required WebGPU validation path. Chromium is
+started with explicit Vulkan and `--use-webgpu-adapter=swiftshader` selection;
+the blocking test also reads Chromium's effective command line and requires
+the returned adapter to identify itself as a fallback adapter.
 
 `npm run shader:contracts` reflects final WGSL through
 `@plasius/gpu-shader` and rejects stale generated files, undeclared entry

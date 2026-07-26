@@ -3,12 +3,14 @@ import http from "node:http";
 import fs from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { validateSwiftShaderRuntime } from "../scripts/swiftshader-qualification.mjs";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const projectRoot = path.resolve(__dirname, "..");
 const requireWebGpuValidation = process.env.REQUIRE_WEBGPU_VALIDATION === "true";
 const requireSwiftShaderValidation = process.env.REQUIRE_SWIFTSHADER_VALIDATION === "true";
+const requireBrowserValidation = requireWebGpuValidation || requireSwiftShaderValidation;
 
 function createSecureContextServer() {
   return http.createServer((request, response) => {
@@ -89,17 +91,27 @@ test.describe("manifest-driven WGSL qualification", () => {
     await new Promise((resolve, reject) => server.close((error) => error ? reject(error) : resolve()));
   });
 
-  test("every queue compile unit creates explicit resources, dispatches, and verifies semantic readback", async ({ page }) => {
+  test("every queue compile unit creates explicit resources, dispatches, and verifies semantic readback", async ({ browser, page }) => {
     await page.goto(baseUrl);
     const hasGpu = await page.evaluate(() => Boolean(navigator.gpu));
     if (!hasGpu) {
-      if (requireWebGpuValidation) {
+      if (requireBrowserValidation) {
         throw new Error("WebGPU validation is required, but navigator.gpu is unavailable.");
       }
       test.skip(true, "WebGPU is unavailable on this optional local run.");
     }
 
     const payload = await createBrowserPayload();
+    let browserArguments = [];
+    if (requireSwiftShaderValidation) {
+      const session = await browser.newBrowserCDPSession();
+      try {
+        const commandLine = await session.send("Browser.getBrowserCommandLine");
+        browserArguments = commandLine.arguments;
+      } finally {
+        await session.detach();
+      }
+    }
     const result = await page.evaluate(async (input) => {
       const decodeBase64 = (value) => {
         const binary = atob(value);
@@ -112,9 +124,23 @@ test.describe("manifest-driven WGSL qualification", () => {
         return [...hash].map((value) => value.toString(16).padStart(2, "0")).join("");
       };
       const adapterInfo = async (adapter) => {
-        if (adapter.info && typeof adapter.info === "object") return adapter.info;
-        if (typeof adapter.requestAdapterInfo === "function") return adapter.requestAdapterInfo();
-        return {};
+        let source = {};
+        if (adapter.info && typeof adapter.info === "object") {
+          source = adapter.info;
+        } else if (typeof adapter.requestAdapterInfo === "function") {
+          source = await adapter.requestAdapterInfo();
+        }
+        return {
+          vendor: typeof source.vendor === "string" ? source.vendor : "",
+          architecture: typeof source.architecture === "string" ? source.architecture : "",
+          device: typeof source.device === "string" ? source.device : "",
+          description: typeof source.description === "string" ? source.description : "",
+          isFallbackAdapter: typeof source.isFallbackAdapter === "boolean"
+            ? source.isFallbackAdapter
+            : typeof adapter.isFallbackAdapter === "boolean"
+              ? adapter.isFallbackAdapter
+              : null,
+        };
       };
       const bufferUsage = (items) => {
         const values = {
@@ -164,9 +190,8 @@ test.describe("manifest-driven WGSL qualification", () => {
       });
       if (!adapter) return { ok: false, reason: "adapter-unavailable" };
       const info = await adapterInfo(adapter);
-      const adapterText = Object.values(info).map(String).join(" ").toLowerCase();
-      if (input.requireSwiftShaderValidation && !adapterText.includes("swiftshader")) {
-        return { ok: false, reason: "swiftshader-not-selected", info };
+      if (input.requireSwiftShaderValidation && info.isFallbackAdapter !== true) {
+        return { ok: false, reason: "swiftshader-fallback-adapter-not-confirmed", info };
       }
 
       const requiredLimits = {};
@@ -338,10 +363,21 @@ test.describe("manifest-driven WGSL qualification", () => {
     }, payload);
 
     if (!result.ok) {
-      if (requireWebGpuValidation) {
+      if (requireBrowserValidation) {
         throw new Error(`Required WebGPU qualification failed: ${JSON.stringify(result)}`);
       }
       test.skip(true, `Optional local WebGPU route unavailable: ${result.reason}`);
+    }
+    if (requireSwiftShaderValidation) {
+      const swiftShaderRuntime = validateSwiftShaderRuntime({
+        browserArguments,
+        adapterInfo: result.info,
+      });
+      if (!swiftShaderRuntime.ok) {
+        throw new Error(
+          `Required SwiftShader qualification failed: ${JSON.stringify(swiftShaderRuntime)}`,
+        );
+      }
     }
 
     expect(result.unitResults.map((item) => item.compileUnitId).sort()).toEqual([
