@@ -1,0 +1,610 @@
+{
+  "contractVersion": "1.0.0",
+  "interfaceId": "gpu-lock-free-queue.flat",
+  "interfaceVersion": "1.0.0",
+  "modules": [
+    {
+      "moduleId": "flat-queue",
+      "sha256": "8fe3a2e4fe5260310dc0ed38c0d2170469a8312b6b214e29979b6bd7134b561b"
+    }
+  ],
+  "records": [
+    {
+      "name": "JobMeta",
+      "alignment": 4,
+      "byteSize": 16,
+      "minimumByteSize": 16,
+      "runtimeArrayMember": null,
+      "addressSpaces": [
+        "storage"
+      ],
+      "members": [
+        {
+          "name": "job_type",
+          "offset": 0,
+          "alignment": 4,
+          "valueByteSize": 4,
+          "occupiedByteSize": 4,
+          "explicitAlign": null,
+          "explicitSize": null,
+          "type": {
+            "kind": "scalar",
+            "scalar": "u32",
+            "alignment": 4,
+            "byteSize": 4
+          }
+        },
+        {
+          "name": "payload_offset",
+          "offset": 4,
+          "alignment": 4,
+          "valueByteSize": 4,
+          "occupiedByteSize": 4,
+          "explicitAlign": null,
+          "explicitSize": null,
+          "type": {
+            "kind": "scalar",
+            "scalar": "u32",
+            "alignment": 4,
+            "byteSize": 4
+          }
+        },
+        {
+          "name": "payload_words",
+          "offset": 8,
+          "alignment": 4,
+          "valueByteSize": 4,
+          "occupiedByteSize": 4,
+          "explicitAlign": null,
+          "explicitSize": null,
+          "type": {
+            "kind": "scalar",
+            "scalar": "u32",
+            "alignment": 4,
+            "byteSize": 4
+          }
+        },
+        {
+          "name": "padding",
+          "offset": 12,
+          "alignment": 4,
+          "valueByteSize": 4,
+          "occupiedByteSize": 4,
+          "explicitAlign": null,
+          "explicitSize": null,
+          "type": {
+            "kind": "scalar",
+            "scalar": "u32",
+            "alignment": 4,
+            "byteSize": 4
+          }
+        }
+      ]
+    },
+    {
+      "name": "Params",
+      "alignment": 8,
+      "byteSize": 16,
+      "minimumByteSize": 16,
+      "runtimeArrayMember": null,
+      "addressSpaces": [
+        "uniform"
+      ],
+      "members": [
+        {
+          "name": "job_count",
+          "offset": 0,
+          "alignment": 4,
+          "valueByteSize": 4,
+          "occupiedByteSize": 4,
+          "explicitAlign": null,
+          "explicitSize": null,
+          "type": {
+            "kind": "scalar",
+            "scalar": "u32",
+            "alignment": 4,
+            "byteSize": 4
+          }
+        },
+        {
+          "name": "output_stride",
+          "offset": 4,
+          "alignment": 4,
+          "valueByteSize": 4,
+          "occupiedByteSize": 4,
+          "explicitAlign": null,
+          "explicitSize": null,
+          "type": {
+            "kind": "scalar",
+            "scalar": "u32",
+            "alignment": 4,
+            "byteSize": 4
+          }
+        },
+        {
+          "name": "padding",
+          "offset": 8,
+          "alignment": 8,
+          "valueByteSize": 8,
+          "occupiedByteSize": 8,
+          "explicitAlign": null,
+          "explicitSize": null,
+          "type": {
+            "kind": "vector",
+            "scalar": "u32",
+            "width": 2,
+            "alignment": 8,
+            "byteSize": 8
+          }
+        }
+      ]
+    },
+    {
+      "name": "Queue",
+      "alignment": 4,
+      "byteSize": 16,
+      "minimumByteSize": 16,
+      "runtimeArrayMember": null,
+      "addressSpaces": [
+        "storage"
+      ],
+      "members": [
+        {
+          "name": "head",
+          "offset": 0,
+          "alignment": 4,
+          "valueByteSize": 4,
+          "occupiedByteSize": 4,
+          "explicitAlign": null,
+          "explicitSize": null,
+          "type": {
+            "kind": "atomic",
+            "scalar": "u32",
+            "alignment": 4,
+            "byteSize": 4
+          }
+        },
+        {
+          "name": "tail",
+          "offset": 4,
+          "alignment": 4,
+          "valueByteSize": 4,
+          "occupiedByteSize": 4,
+          "explicitAlign": null,
+          "explicitSize": null,
+          "type": {
+            "kind": "atomic",
+            "scalar": "u32",
+            "alignment": 4,
+            "byteSize": 4
+          }
+        },
+        {
+          "name": "capacity",
+          "offset": 8,
+          "alignment": 4,
+          "valueByteSize": 4,
+          "occupiedByteSize": 4,
+          "explicitAlign": null,
+          "explicitSize": null,
+          "type": {
+            "kind": "scalar",
+            "scalar": "u32",
+            "alignment": 4,
+            "byteSize": 4
+          }
+        },
+        {
+          "name": "mask",
+          "offset": 12,
+          "alignment": 4,
+          "valueByteSize": 4,
+          "occupiedByteSize": 4,
+          "explicitAlign": null,
+          "explicitSize": null,
+          "type": {
+            "kind": "scalar",
+            "scalar": "u32",
+            "alignment": 4,
+            "byteSize": 4
+          }
+        }
+      ]
+    },
+    {
+      "name": "Slot",
+      "alignment": 4,
+      "byteSize": 16,
+      "minimumByteSize": 16,
+      "runtimeArrayMember": null,
+      "addressSpaces": [
+        "storage"
+      ],
+      "members": [
+        {
+          "name": "seq",
+          "offset": 0,
+          "alignment": 4,
+          "valueByteSize": 4,
+          "occupiedByteSize": 4,
+          "explicitAlign": null,
+          "explicitSize": null,
+          "type": {
+            "kind": "atomic",
+            "scalar": "u32",
+            "alignment": 4,
+            "byteSize": 4
+          }
+        },
+        {
+          "name": "job_type",
+          "offset": 4,
+          "alignment": 4,
+          "valueByteSize": 4,
+          "occupiedByteSize": 4,
+          "explicitAlign": null,
+          "explicitSize": null,
+          "type": {
+            "kind": "scalar",
+            "scalar": "u32",
+            "alignment": 4,
+            "byteSize": 4
+          }
+        },
+        {
+          "name": "payload_offset",
+          "offset": 8,
+          "alignment": 4,
+          "valueByteSize": 4,
+          "occupiedByteSize": 4,
+          "explicitAlign": null,
+          "explicitSize": null,
+          "type": {
+            "kind": "scalar",
+            "scalar": "u32",
+            "alignment": 4,
+            "byteSize": 4
+          }
+        },
+        {
+          "name": "payload_words",
+          "offset": 12,
+          "alignment": 4,
+          "valueByteSize": 4,
+          "occupiedByteSize": 4,
+          "explicitAlign": null,
+          "explicitSize": null,
+          "type": {
+            "kind": "scalar",
+            "scalar": "u32",
+            "alignment": 4,
+            "byteSize": 4
+          }
+        }
+      ]
+    }
+  ],
+  "bindings": [
+    {
+      "moduleId": "flat-queue",
+      "variableName": "queue",
+      "group": 0,
+      "binding": 0,
+      "resource": {
+        "kind": "buffer",
+        "addressSpace": "storage",
+        "access": "read_write",
+        "recordName": "Queue",
+        "minimumBindingSize": 16
+      },
+      "visibility": [
+        "compute"
+      ]
+    },
+    {
+      "moduleId": "flat-queue",
+      "variableName": "slots",
+      "group": 0,
+      "binding": 1,
+      "resource": {
+        "kind": "buffer",
+        "addressSpace": "storage",
+        "access": "read_write",
+        "recordName": null,
+        "minimumBindingSize": 16
+      },
+      "visibility": [
+        "compute"
+      ]
+    },
+    {
+      "moduleId": "flat-queue",
+      "variableName": "input_jobs",
+      "group": 0,
+      "binding": 2,
+      "resource": {
+        "kind": "buffer",
+        "addressSpace": "storage",
+        "access": "read",
+        "recordName": null,
+        "minimumBindingSize": 16
+      },
+      "visibility": [
+        "compute"
+      ]
+    },
+    {
+      "moduleId": "flat-queue",
+      "variableName": "output_jobs",
+      "group": 0,
+      "binding": 3,
+      "resource": {
+        "kind": "buffer",
+        "addressSpace": "storage",
+        "access": "read_write",
+        "recordName": null,
+        "minimumBindingSize": 16
+      },
+      "visibility": [
+        "compute"
+      ]
+    },
+    {
+      "moduleId": "flat-queue",
+      "variableName": "input_payloads",
+      "group": 0,
+      "binding": 4,
+      "resource": {
+        "kind": "buffer",
+        "addressSpace": "storage",
+        "access": "read",
+        "recordName": null,
+        "minimumBindingSize": 4
+      },
+      "visibility": [
+        "compute"
+      ]
+    },
+    {
+      "moduleId": "flat-queue",
+      "variableName": "output_payloads",
+      "group": 0,
+      "binding": 5,
+      "resource": {
+        "kind": "buffer",
+        "addressSpace": "storage",
+        "access": "read_write",
+        "recordName": null,
+        "minimumBindingSize": 4
+      },
+      "visibility": [
+        "compute"
+      ]
+    },
+    {
+      "moduleId": "flat-queue",
+      "variableName": "status",
+      "group": 0,
+      "binding": 6,
+      "resource": {
+        "kind": "buffer",
+        "addressSpace": "storage",
+        "access": "read_write",
+        "recordName": null,
+        "minimumBindingSize": 4
+      },
+      "visibility": [
+        "compute"
+      ]
+    },
+    {
+      "moduleId": "flat-queue",
+      "variableName": "params",
+      "group": 0,
+      "binding": 7,
+      "resource": {
+        "kind": "buffer",
+        "addressSpace": "uniform",
+        "access": "read",
+        "recordName": "Params",
+        "minimumBindingSize": 16
+      },
+      "visibility": [
+        "compute"
+      ]
+    }
+  ],
+  "entryPoints": [
+    {
+      "moduleId": "flat-queue",
+      "name": "enqueue_main",
+      "stage": "compute",
+      "inputs": [
+        {
+          "name": "gid",
+          "locationKind": "builtin",
+          "location": "global_invocation_id",
+          "interpolation": null,
+          "type": {
+            "kind": "vector",
+            "scalar": "u32",
+            "width": 3,
+            "alignment": 16,
+            "byteSize": 12
+          }
+        }
+      ],
+      "outputs": [],
+      "bindingKeys": [
+        "flat-queue:0:0",
+        "flat-queue:0:1",
+        "flat-queue:0:2",
+        "flat-queue:0:4",
+        "flat-queue:0:6",
+        "flat-queue:0:7"
+      ],
+      "overrideNames": [],
+      "workgroupSize": [
+        {
+          "kind": "literal",
+          "value": 64
+        },
+        {
+          "kind": "literal",
+          "value": 1
+        },
+        {
+          "kind": "literal",
+          "value": 1
+        }
+      ],
+      "workgroupStorageSize": 0
+    },
+    {
+      "moduleId": "flat-queue",
+      "name": "dequeue_main",
+      "stage": "compute",
+      "inputs": [
+        {
+          "name": "gid",
+          "locationKind": "builtin",
+          "location": "global_invocation_id",
+          "interpolation": null,
+          "type": {
+            "kind": "vector",
+            "scalar": "u32",
+            "width": 3,
+            "alignment": 16,
+            "byteSize": 12
+          }
+        }
+      ],
+      "outputs": [],
+      "bindingKeys": [
+        "flat-queue:0:0",
+        "flat-queue:0:1",
+        "flat-queue:0:3",
+        "flat-queue:0:4",
+        "flat-queue:0:5",
+        "flat-queue:0:6",
+        "flat-queue:0:7"
+      ],
+      "overrideNames": [],
+      "workgroupSize": [
+        {
+          "kind": "literal",
+          "value": 64
+        },
+        {
+          "kind": "literal",
+          "value": 1
+        },
+        {
+          "kind": "literal",
+          "value": 1
+        }
+      ],
+      "workgroupStorageSize": 0
+    }
+  ],
+  "vertexInputs": [],
+  "overrides": [],
+  "modelAbi": {
+    "recordNames": [
+      "JobMeta",
+      "Params",
+      "Queue",
+      "Slot"
+    ],
+    "bindings": [
+      {
+        "source": {
+          "moduleId": "flat-queue",
+          "group": 0,
+          "binding": 0
+        },
+        "resource": {
+          "access": "read_write",
+          "addressSpace": "storage",
+          "kind": "buffer",
+          "minimumBindingSize": 16,
+          "recordName": "Queue"
+        },
+        "semantic": "queue.header"
+      },
+      {
+        "source": {
+          "moduleId": "flat-queue",
+          "group": 0,
+          "binding": 7
+        },
+        "resource": {
+          "access": "read",
+          "addressSpace": "uniform",
+          "kind": "buffer",
+          "minimumBindingSize": 16,
+          "recordName": "Params"
+        },
+        "semantic": "queue.params"
+      }
+    ],
+    "vertexInputs": [],
+    "semantics": [
+      {
+        "semantic": "queue.header",
+        "source": {
+          "kind": "binding",
+          "group": 0,
+          "binding": 0,
+          "moduleId": "flat-queue"
+        }
+      },
+      {
+        "semantic": "queue.params",
+        "source": {
+          "kind": "binding",
+          "group": 0,
+          "binding": 7,
+          "moduleId": "flat-queue"
+        }
+      },
+      {
+        "semantic": "queue.job-type",
+        "source": {
+          "kind": "record-member",
+          "recordName": "JobMeta",
+          "memberPath": [
+            "job_type"
+          ]
+        }
+      },
+      {
+        "semantic": "queue.payload-offset",
+        "source": {
+          "kind": "record-member",
+          "recordName": "JobMeta",
+          "memberPath": [
+            "payload_offset"
+          ]
+        }
+      },
+      {
+        "semantic": "queue.payload-words",
+        "source": {
+          "kind": "record-member",
+          "recordName": "JobMeta",
+          "memberPath": [
+            "payload_words"
+          ]
+        }
+      }
+    ]
+  },
+  "modelAbiHash": "74ea7ca4d42ed425fa0b8c461541ddfd07a04773d9160abdc553213e2f161b92",
+  "interfaceAbiHash": "f87845ae148393d05fdd614fc1d47b9e2a3347bb4cec83044dcb916ba67514b3",
+  "generatedBy": {
+    "packageVersion": "0.1.3",
+    "reflector": "wgsl_reflect",
+    "reflectorVersion": "1.5.0"
+  }
+}

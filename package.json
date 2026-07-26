@@ -25,20 +25,23 @@
     "./package.json": "./package.json"
   },
   "scripts": {
-    "build": "tsup && cp src/queue.wgsl dist/queue.wgsl && cp src/dag-queue.wgsl dist/dag-queue.wgsl",
+    "build": "npm run shader:contracts && tsup && cp src/queue.wgsl dist/queue.wgsl && cp src/dag-queue.wgsl dist/dag-queue.wgsl && node scripts/generate-shader-contracts.mjs --copy-dist",
     "demo": "python3 -m http.server",
-    "typecheck": "node --check src/index.js && node --check demo/main.js",
+    "typecheck": "node --check src/index.js && node --check demo/main.js && node --check scripts/generate-shader-contracts.mjs && node --check scripts/swiftshader-qualification.mjs && node --check scripts/validate-shader-evidence.mjs && node --check tests/shader-qualification.e2e.spec.js",
     "audit:eslint": "eslint . --max-warnings=0",
     "audit:deps": "npm ls --all --omit=optional --omit=peer > /dev/null 2>&1 || true",
-    "audit:npm": "npm audit --audit-level=high --omit=dev",
+    "audit:npm": "npm audit --audit-level=low",
     "audit:test": "npm run test:coverage",
     "lint": "eslint . --max-warnings=0",
     "test": "npm run test:unit",
     "test:unit": "node --test",
     "test:e2e": "playwright test",
     "test:e2e:setup": "npx playwright install chromium",
-    "test:wgsl": "playwright test tests/e2e.spec.js --grep \"WGSL compiles when WebGPU is available\"",
+    "test:wgsl": "playwright test tests/shader-qualification.e2e.spec.js",
     "test:coverage": "c8 --reporter=lcov --reporter=text node --test",
+    "shader:generate": "node scripts/generate-shader-contracts.mjs --write",
+    "shader:contracts": "node scripts/generate-shader-contracts.mjs --check",
+    "shader:evidence": "node scripts/validate-shader-evidence.mjs",
     "prepare": "npm run build",
     "pack:check": "node scripts/verify-public-package.cjs",
     "prepublishOnly": "npm run build && npm run pack:check"
@@ -58,10 +61,11 @@
   "author": "Plasius LTD <development@plasius.co.uk>",
   "license": "Apache-2.0",
   "dependencies": {
-    "@plasius/gpu-shared": "^1.0.2"
+    "@plasius/gpu-shared": "^1.0.14"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
+    "@plasius/gpu-shader": "^0.1.3",
     "@playwright/test": "^1.61.1",
     "c8": "^11.0.0",
     "eslint": "^10.6.0",
@@ -91,6 +95,8 @@
     }
   ],
   "overrides": {
+    "brace-expansion": "^5.0.8",
+    "esbuild": "^0.28.1",
     "minimatch": "^10.2.1"
   },
   "engines": {

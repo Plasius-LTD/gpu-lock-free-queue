@@ -1,0 +1,361 @@
+{
+  "contractVersion": "1.0.0",
+  "inventory": {
+    "contractVersion": "1.0.0",
+    "fragments": [
+      {
+        "fragmentId": "dag-queue",
+        "path": "fragments/dag-queue.wgsl",
+        "sha256": "ee71ec57f00652cd4061bebb3cb01a408eb3fbf7ae561b892e28e90f650d9057"
+      }
+    ],
+    "compileUnits": [
+      {
+        "contractVersion": "1.0.0",
+        "compileUnitId": "queue.dag.v1",
+        "fragmentIds": [
+          "dag-queue"
+        ],
+        "modules": [
+          {
+            "moduleId": "dag-queue",
+            "sha256": "ee71ec57f00652cd4061bebb3cb01a408eb3fbf7ae561b892e28e90f650d9057",
+            "assembly": {
+              "kind": "concat-v1",
+              "fragmentIds": [
+                "dag-queue"
+              ]
+            }
+          }
+        ],
+        "entryPoints": [
+          {
+            "moduleId": "dag-queue",
+            "name": "enqueue_main",
+            "stage": "compute"
+          },
+          {
+            "moduleId": "dag-queue",
+            "name": "dequeue_main",
+            "stage": "compute"
+          }
+        ],
+        "pipelines": [
+          {
+            "kind": "compute",
+            "pipelineId": "dag.enqueue",
+            "layout": {
+              "bindGroups": [
+                {
+                  "group": 0,
+                  "entries": [
+                    {
+                      "group": 0,
+                      "binding": 0,
+                      "resource": {
+                        "kind": "buffer",
+                        "addressSpace": "storage",
+                        "access": "read_write",
+                        "recordName": null,
+                        "minimumBindingSize": 16
+                      },
+                      "visibility": [
+                        "compute"
+                      ]
+                    },
+                    {
+                      "group": 0,
+                      "binding": 1,
+                      "resource": {
+                        "kind": "buffer",
+                        "addressSpace": "storage",
+                        "access": "read_write",
+                        "recordName": null,
+                        "minimumBindingSize": 16
+                      },
+                      "visibility": [
+                        "compute"
+                      ]
+                    },
+                    {
+                      "group": 0,
+                      "binding": 2,
+                      "resource": {
+                        "kind": "buffer",
+                        "addressSpace": "storage",
+                        "access": "read",
+                        "recordName": null,
+                        "minimumBindingSize": 32
+                      },
+                      "visibility": [
+                        "compute"
+                      ]
+                    },
+                    {
+                      "group": 0,
+                      "binding": 3,
+                      "resource": {
+                        "kind": "buffer",
+                        "addressSpace": "storage",
+                        "access": "read_write",
+                        "recordName": null,
+                        "minimumBindingSize": 16
+                      },
+                      "visibility": [
+                        "compute"
+                      ]
+                    },
+                    {
+                      "group": 0,
+                      "binding": 8,
+                      "resource": {
+                        "kind": "buffer",
+                        "addressSpace": "storage",
+                        "access": "read_write",
+                        "recordName": null,
+                        "minimumBindingSize": 4
+                      },
+                      "visibility": [
+                        "compute"
+                      ]
+                    },
+                    {
+                      "group": 0,
+                      "binding": 9,
+                      "resource": {
+                        "kind": "buffer",
+                        "addressSpace": "uniform",
+                        "access": "read",
+                        "recordName": "Params",
+                        "minimumBindingSize": 16
+                      },
+                      "visibility": [
+                        "compute"
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            "compute": {
+              "moduleId": "dag-queue",
+              "entryPoint": "enqueue_main",
+              "constants": {}
+            }
+          },
+          {
+            "kind": "compute",
+            "pipelineId": "dag.dequeue",
+            "layout": {
+              "bindGroups": [
+                {
+                  "group": 0,
+                  "entries": [
+                    {
+                      "group": 0,
+                      "binding": 0,
+                      "resource": {
+                        "kind": "buffer",
+                        "addressSpace": "storage",
+                        "access": "read_write",
+                        "recordName": null,
+                        "minimumBindingSize": 16
+                      },
+                      "visibility": [
+                        "compute"
+                      ]
+                    },
+                    {
+                      "group": 0,
+                      "binding": 1,
+                      "resource": {
+                        "kind": "buffer",
+                        "addressSpace": "storage",
+                        "access": "read_write",
+                        "recordName": null,
+                        "minimumBindingSize": 16
+                      },
+                      "visibility": [
+                        "compute"
+                      ]
+                    },
+                    {
+                      "group": 0,
+                      "binding": 2,
+                      "resource": {
+                        "kind": "buffer",
+                        "addressSpace": "storage",
+                        "access": "read",
+                        "recordName": null,
+                        "minimumBindingSize": 32
+                      },
+                      "visibility": [
+                        "compute"
+                      ]
+                    },
+                    {
+                      "group": 0,
+                      "binding": 5,
+                      "resource": {
+                        "kind": "buffer",
+                        "addressSpace": "storage",
+                        "access": "read_write",
+                        "recordName": null,
+                        "minimumBindingSize": 48
+                      },
+                      "visibility": [
+                        "compute"
+                      ]
+                    },
+                    {
+                      "group": 0,
+                      "binding": 6,
+                      "resource": {
+                        "kind": "buffer",
+                        "addressSpace": "storage",
+                        "access": "read",
+                        "recordName": null,
+                        "minimumBindingSize": 4
+                      },
+                      "visibility": [
+                        "compute"
+                      ]
+                    },
+                    {
+                      "group": 0,
+                      "binding": 7,
+                      "resource": {
+                        "kind": "buffer",
+                        "addressSpace": "storage",
+                        "access": "read_write",
+                        "recordName": null,
+                        "minimumBindingSize": 4
+                      },
+                      "visibility": [
+                        "compute"
+                      ]
+                    },
+                    {
+                      "group": 0,
+                      "binding": 8,
+                      "resource": {
+                        "kind": "buffer",
+                        "addressSpace": "storage",
+                        "access": "read_write",
+                        "recordName": null,
+                        "minimumBindingSize": 4
+                      },
+                      "visibility": [
+                        "compute"
+                      ]
+                    },
+                    {
+                      "group": 0,
+                      "binding": 9,
+                      "resource": {
+                        "kind": "buffer",
+                        "addressSpace": "uniform",
+                        "access": "read",
+                        "recordName": "Params",
+                        "minimumBindingSize": 16
+                      },
+                      "visibility": [
+                        "compute"
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            "compute": {
+              "moduleId": "dag-queue",
+              "entryPoint": "dequeue_main",
+              "constants": {}
+            }
+          }
+        ],
+        "interfaceRef": {
+          "interfaceId": "gpu-lock-free-queue.dag",
+          "interfaceVersion": "1.0.0",
+          "manifestUri": "https://assets.plasius.co.uk/gpu-interfaces/gpu-lock-free-queue.dag/1.0.0/manifest.json",
+          "manifestSha256": "850ccace2c6617ba7bf44671e0913914283d665d05ba52be9d0b93b0ef37d292",
+          "interfaceAbiHash": "cb3f75fd66b612c56979e67982fd071978dffc086777b9fbbd735a89e5f0404c",
+          "modelAbiHash": "7e89700251001e9f969c70bbdedb261dee18d1dbfa8604af000021d5b59ab019"
+        },
+        "overrideValues": {},
+        "qualificationFixture": {
+          "fixtureId": "queue.dag.semantic.v1",
+          "path": "fixtures/fixture.json",
+          "sha256": "18f97ab900a72bc6eee51fb92ea0a4adcb6de445462e5808487733cde9f7e2f4"
+        }
+      }
+    ]
+  },
+  "subject": {
+    "shaderManifestCore": {
+      "shaderId": "gpu-lock-free-queue.dag",
+      "version": "1.0.0",
+      "sha256": "b4e691726ae7326f77462aa4795d5c314c745c25248b03d2ab1fe51c1ffefc4b"
+    },
+    "compileUnitInventorySha256": "a6c9dcc969e719268d1983777b49080216bb75452256514e659e6617c4c5cab0",
+    "shaderAbiHash": "7bee1d2c0c298d8d8b3e5e3dde76dc8de1412df633b7823ba4a6bfe87c472122",
+    "interfaceManifestSha256": "850ccace2c6617ba7bf44671e0913914283d665d05ba52be9d0b93b0ef37d292",
+    "modelAbiHashes": [
+      "7e89700251001e9f969c70bbdedb261dee18d1dbfa8604af000021d5b59ab019"
+    ],
+    "modules": [
+      {
+        "moduleId": "dag-queue",
+        "sha256": "ee71ec57f00652cd4061bebb3cb01a408eb3fbf7ae561b892e28e90f650d9057"
+      }
+    ],
+    "requiredCompileUnitIds": [
+      "queue.dag.v1"
+    ],
+    "requiredCellIds": [
+      "android-adreno-chrome-vulkan",
+      "android-mali-chrome-vulkan",
+      "chromeos-arm-chrome-vulkan",
+      "chromeos-intel-chrome-vulkan",
+      "ios-iphone-safari-metal",
+      "ipados-ipad-safari-metal",
+      "macos-apple-chrome-metal",
+      "macos-apple-firefox-metal",
+      "macos-apple-safari-metal",
+      "swiftshader.chromium.ubuntu-x64",
+      "ubuntu-intel-chrome-vulkan",
+      "ubuntu-nvidia-chrome-vulkan",
+      "visionos-safari-metal",
+      "win11-amd-firefox-d3d12",
+      "win11-intel-chrome-d3d12",
+      "win11-nvidia-edge-d3d12"
+    ]
+  },
+  "shaderManifestCorePath": "manifests/shader-core.json",
+  "gpuInterfaceManifest": {
+    "path": "manifests/gpu-interface.json",
+    "sha256": "850ccace2c6617ba7bf44671e0913914283d665d05ba52be9d0b93b0ef37d292"
+  },
+  "modelCompatibilityFixtures": [
+    {
+      "fixtureId": "dag.queue-model.v1",
+      "path": "fixtures/model-compatibility.json",
+      "sha256": "f9c671bd48746f49c3f070ca00b7b4a02f9ae190bcb5acf2a1a49b1fcedef66f"
+    }
+  ],
+  "modules": [
+    {
+      "moduleId": "dag-queue",
+      "path": "modules/dag-queue.wgsl",
+      "sha256": "ee71ec57f00652cd4061bebb3cb01a408eb3fbf7ae561b892e28e90f650d9057"
+    }
+  ],
+  "fixtures": [
+    {
+      "fixtureId": "queue.dag.semantic.v1",
+      "path": "fixtures/fixture.json",
+      "sha256": "18f97ab900a72bc6eee51fb92ea0a4adcb6de445462e5808487733cde9f7e2f4",
+      "kind": "qualification-fixture"
+    }
+  ]
+}

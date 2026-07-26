@@ -1,0 +1,870 @@
+{
+  "contractVersion": "1.0.0",
+  "interfaceId": "gpu-lock-free-queue.dag",
+  "interfaceVersion": "1.0.0",
+  "modules": [
+    {
+      "moduleId": "dag-queue",
+      "sha256": "ee71ec57f00652cd4061bebb3cb01a408eb3fbf7ae561b892e28e90f650d9057"
+    }
+  ],
+  "records": [
+    {
+      "name": "JobDesc",
+      "alignment": 16,
+      "byteSize": 48,
+      "minimumByteSize": 48,
+      "runtimeArrayMember": null,
+      "addressSpaces": [
+        "storage"
+      ],
+      "members": [
+        {
+          "name": "node_index",
+          "offset": 0,
+          "alignment": 4,
+          "valueByteSize": 4,
+          "occupiedByteSize": 4,
+          "explicitAlign": null,
+          "explicitSize": null,
+          "type": {
+            "kind": "scalar",
+            "scalar": "u32",
+            "alignment": 4,
+            "byteSize": 4
+          }
+        },
+        {
+          "name": "job_type",
+          "offset": 4,
+          "alignment": 4,
+          "valueByteSize": 4,
+          "occupiedByteSize": 4,
+          "explicitAlign": null,
+          "explicitSize": null,
+          "type": {
+            "kind": "scalar",
+            "scalar": "u32",
+            "alignment": 4,
+            "byteSize": 4
+          }
+        },
+        {
+          "name": "priority",
+          "offset": 8,
+          "alignment": 4,
+          "valueByteSize": 4,
+          "occupiedByteSize": 4,
+          "explicitAlign": null,
+          "explicitSize": null,
+          "type": {
+            "kind": "scalar",
+            "scalar": "u32",
+            "alignment": 4,
+            "byteSize": 4
+          }
+        },
+        {
+          "name": "payload_offset",
+          "offset": 12,
+          "alignment": 4,
+          "valueByteSize": 4,
+          "occupiedByteSize": 4,
+          "explicitAlign": null,
+          "explicitSize": null,
+          "type": {
+            "kind": "scalar",
+            "scalar": "u32",
+            "alignment": 4,
+            "byteSize": 4
+          }
+        },
+        {
+          "name": "payload_words",
+          "offset": 16,
+          "alignment": 4,
+          "valueByteSize": 4,
+          "occupiedByteSize": 4,
+          "explicitAlign": null,
+          "explicitSize": null,
+          "type": {
+            "kind": "scalar",
+            "scalar": "u32",
+            "alignment": 4,
+            "byteSize": 4
+          }
+        },
+        {
+          "name": "padding",
+          "offset": 32,
+          "alignment": 16,
+          "valueByteSize": 12,
+          "occupiedByteSize": 12,
+          "explicitAlign": null,
+          "explicitSize": null,
+          "type": {
+            "kind": "vector",
+            "scalar": "u32",
+            "width": 3,
+            "alignment": 16,
+            "byteSize": 12
+          }
+        }
+      ]
+    },
+    {
+      "name": "JobNode",
+      "alignment": 4,
+      "byteSize": 32,
+      "minimumByteSize": 32,
+      "runtimeArrayMember": null,
+      "addressSpaces": [
+        "storage"
+      ],
+      "members": [
+        {
+          "name": "job_type",
+          "offset": 0,
+          "alignment": 4,
+          "valueByteSize": 4,
+          "occupiedByteSize": 4,
+          "explicitAlign": null,
+          "explicitSize": null,
+          "type": {
+            "kind": "scalar",
+            "scalar": "u32",
+            "alignment": 4,
+            "byteSize": 4
+          }
+        },
+        {
+          "name": "priority",
+          "offset": 4,
+          "alignment": 4,
+          "valueByteSize": 4,
+          "occupiedByteSize": 4,
+          "explicitAlign": null,
+          "explicitSize": null,
+          "type": {
+            "kind": "scalar",
+            "scalar": "u32",
+            "alignment": 4,
+            "byteSize": 4
+          }
+        },
+        {
+          "name": "payload_offset",
+          "offset": 8,
+          "alignment": 4,
+          "valueByteSize": 4,
+          "occupiedByteSize": 4,
+          "explicitAlign": null,
+          "explicitSize": null,
+          "type": {
+            "kind": "scalar",
+            "scalar": "u32",
+            "alignment": 4,
+            "byteSize": 4
+          }
+        },
+        {
+          "name": "payload_words",
+          "offset": 12,
+          "alignment": 4,
+          "valueByteSize": 4,
+          "occupiedByteSize": 4,
+          "explicitAlign": null,
+          "explicitSize": null,
+          "type": {
+            "kind": "scalar",
+            "scalar": "u32",
+            "alignment": 4,
+            "byteSize": 4
+          }
+        },
+        {
+          "name": "dependency_offset",
+          "offset": 16,
+          "alignment": 4,
+          "valueByteSize": 4,
+          "occupiedByteSize": 4,
+          "explicitAlign": null,
+          "explicitSize": null,
+          "type": {
+            "kind": "scalar",
+            "scalar": "u32",
+            "alignment": 4,
+            "byteSize": 4
+          }
+        },
+        {
+          "name": "dependency_count",
+          "offset": 20,
+          "alignment": 4,
+          "valueByteSize": 4,
+          "occupiedByteSize": 4,
+          "explicitAlign": null,
+          "explicitSize": null,
+          "type": {
+            "kind": "scalar",
+            "scalar": "u32",
+            "alignment": 4,
+            "byteSize": 4
+          }
+        },
+        {
+          "name": "dependent_offset",
+          "offset": 24,
+          "alignment": 4,
+          "valueByteSize": 4,
+          "occupiedByteSize": 4,
+          "explicitAlign": null,
+          "explicitSize": null,
+          "type": {
+            "kind": "scalar",
+            "scalar": "u32",
+            "alignment": 4,
+            "byteSize": 4
+          }
+        },
+        {
+          "name": "dependent_count",
+          "offset": 28,
+          "alignment": 4,
+          "valueByteSize": 4,
+          "occupiedByteSize": 4,
+          "explicitAlign": null,
+          "explicitSize": null,
+          "type": {
+            "kind": "scalar",
+            "scalar": "u32",
+            "alignment": 4,
+            "byteSize": 4
+          }
+        }
+      ]
+    },
+    {
+      "name": "JobState",
+      "alignment": 8,
+      "byteSize": 16,
+      "minimumByteSize": 16,
+      "runtimeArrayMember": null,
+      "addressSpaces": [
+        "storage"
+      ],
+      "members": [
+        {
+          "name": "unresolved",
+          "offset": 0,
+          "alignment": 4,
+          "valueByteSize": 4,
+          "occupiedByteSize": 4,
+          "explicitAlign": null,
+          "explicitSize": null,
+          "type": {
+            "kind": "atomic",
+            "scalar": "u32",
+            "alignment": 4,
+            "byteSize": 4
+          }
+        },
+        {
+          "name": "state",
+          "offset": 4,
+          "alignment": 4,
+          "valueByteSize": 4,
+          "occupiedByteSize": 4,
+          "explicitAlign": null,
+          "explicitSize": null,
+          "type": {
+            "kind": "atomic",
+            "scalar": "u32",
+            "alignment": 4,
+            "byteSize": 4
+          }
+        },
+        {
+          "name": "padding",
+          "offset": 8,
+          "alignment": 8,
+          "valueByteSize": 8,
+          "occupiedByteSize": 8,
+          "explicitAlign": null,
+          "explicitSize": null,
+          "type": {
+            "kind": "vector",
+            "scalar": "u32",
+            "width": 2,
+            "alignment": 8,
+            "byteSize": 8
+          }
+        }
+      ]
+    },
+    {
+      "name": "Params",
+      "alignment": 4,
+      "byteSize": 16,
+      "minimumByteSize": 16,
+      "runtimeArrayMember": null,
+      "addressSpaces": [
+        "uniform"
+      ],
+      "members": [
+        {
+          "name": "job_count",
+          "offset": 0,
+          "alignment": 4,
+          "valueByteSize": 4,
+          "occupiedByteSize": 4,
+          "explicitAlign": null,
+          "explicitSize": null,
+          "type": {
+            "kind": "scalar",
+            "scalar": "u32",
+            "alignment": 4,
+            "byteSize": 4
+          }
+        },
+        {
+          "name": "output_stride",
+          "offset": 4,
+          "alignment": 4,
+          "valueByteSize": 4,
+          "occupiedByteSize": 4,
+          "explicitAlign": null,
+          "explicitSize": null,
+          "type": {
+            "kind": "scalar",
+            "scalar": "u32",
+            "alignment": 4,
+            "byteSize": 4
+          }
+        },
+        {
+          "name": "ready_queue_count",
+          "offset": 8,
+          "alignment": 4,
+          "valueByteSize": 4,
+          "occupiedByteSize": 4,
+          "explicitAlign": null,
+          "explicitSize": null,
+          "type": {
+            "kind": "scalar",
+            "scalar": "u32",
+            "alignment": 4,
+            "byteSize": 4
+          }
+        },
+        {
+          "name": "max_priority",
+          "offset": 12,
+          "alignment": 4,
+          "valueByteSize": 4,
+          "occupiedByteSize": 4,
+          "explicitAlign": null,
+          "explicitSize": null,
+          "type": {
+            "kind": "scalar",
+            "scalar": "u32",
+            "alignment": 4,
+            "byteSize": 4
+          }
+        }
+      ]
+    },
+    {
+      "name": "ReadyQueue",
+      "alignment": 4,
+      "byteSize": 16,
+      "minimumByteSize": 16,
+      "runtimeArrayMember": null,
+      "addressSpaces": [
+        "storage"
+      ],
+      "members": [
+        {
+          "name": "head",
+          "offset": 0,
+          "alignment": 4,
+          "valueByteSize": 4,
+          "occupiedByteSize": 4,
+          "explicitAlign": null,
+          "explicitSize": null,
+          "type": {
+            "kind": "atomic",
+            "scalar": "u32",
+            "alignment": 4,
+            "byteSize": 4
+          }
+        },
+        {
+          "name": "tail",
+          "offset": 4,
+          "alignment": 4,
+          "valueByteSize": 4,
+          "occupiedByteSize": 4,
+          "explicitAlign": null,
+          "explicitSize": null,
+          "type": {
+            "kind": "atomic",
+            "scalar": "u32",
+            "alignment": 4,
+            "byteSize": 4
+          }
+        },
+        {
+          "name": "capacity",
+          "offset": 8,
+          "alignment": 4,
+          "valueByteSize": 4,
+          "occupiedByteSize": 4,
+          "explicitAlign": null,
+          "explicitSize": null,
+          "type": {
+            "kind": "scalar",
+            "scalar": "u32",
+            "alignment": 4,
+            "byteSize": 4
+          }
+        },
+        {
+          "name": "mask",
+          "offset": 12,
+          "alignment": 4,
+          "valueByteSize": 4,
+          "occupiedByteSize": 4,
+          "explicitAlign": null,
+          "explicitSize": null,
+          "type": {
+            "kind": "scalar",
+            "scalar": "u32",
+            "alignment": 4,
+            "byteSize": 4
+          }
+        }
+      ]
+    },
+    {
+      "name": "ReadySlot",
+      "alignment": 4,
+      "byteSize": 16,
+      "minimumByteSize": 16,
+      "runtimeArrayMember": null,
+      "addressSpaces": [
+        "storage"
+      ],
+      "members": [
+        {
+          "name": "seq",
+          "offset": 0,
+          "alignment": 4,
+          "valueByteSize": 4,
+          "occupiedByteSize": 4,
+          "explicitAlign": null,
+          "explicitSize": null,
+          "type": {
+            "kind": "atomic",
+            "scalar": "u32",
+            "alignment": 4,
+            "byteSize": 4
+          }
+        },
+        {
+          "name": "node_index",
+          "offset": 4,
+          "alignment": 4,
+          "valueByteSize": 4,
+          "occupiedByteSize": 4,
+          "explicitAlign": null,
+          "explicitSize": null,
+          "type": {
+            "kind": "scalar",
+            "scalar": "u32",
+            "alignment": 4,
+            "byteSize": 4
+          }
+        },
+        {
+          "name": "padding0",
+          "offset": 8,
+          "alignment": 4,
+          "valueByteSize": 4,
+          "occupiedByteSize": 4,
+          "explicitAlign": null,
+          "explicitSize": null,
+          "type": {
+            "kind": "scalar",
+            "scalar": "u32",
+            "alignment": 4,
+            "byteSize": 4
+          }
+        },
+        {
+          "name": "padding1",
+          "offset": 12,
+          "alignment": 4,
+          "valueByteSize": 4,
+          "occupiedByteSize": 4,
+          "explicitAlign": null,
+          "explicitSize": null,
+          "type": {
+            "kind": "scalar",
+            "scalar": "u32",
+            "alignment": 4,
+            "byteSize": 4
+          }
+        }
+      ]
+    }
+  ],
+  "bindings": [
+    {
+      "moduleId": "dag-queue",
+      "variableName": "ready_queues",
+      "group": 0,
+      "binding": 0,
+      "resource": {
+        "kind": "buffer",
+        "addressSpace": "storage",
+        "access": "read_write",
+        "recordName": null,
+        "minimumBindingSize": 16
+      },
+      "visibility": [
+        "compute"
+      ]
+    },
+    {
+      "moduleId": "dag-queue",
+      "variableName": "ready_slots",
+      "group": 0,
+      "binding": 1,
+      "resource": {
+        "kind": "buffer",
+        "addressSpace": "storage",
+        "access": "read_write",
+        "recordName": null,
+        "minimumBindingSize": 16
+      },
+      "visibility": [
+        "compute"
+      ]
+    },
+    {
+      "moduleId": "dag-queue",
+      "variableName": "job_nodes",
+      "group": 0,
+      "binding": 2,
+      "resource": {
+        "kind": "buffer",
+        "addressSpace": "storage",
+        "access": "read",
+        "recordName": null,
+        "minimumBindingSize": 32
+      },
+      "visibility": [
+        "compute"
+      ]
+    },
+    {
+      "moduleId": "dag-queue",
+      "variableName": "job_states",
+      "group": 0,
+      "binding": 3,
+      "resource": {
+        "kind": "buffer",
+        "addressSpace": "storage",
+        "access": "read_write",
+        "recordName": null,
+        "minimumBindingSize": 16
+      },
+      "visibility": [
+        "compute"
+      ]
+    },
+    {
+      "moduleId": "dag-queue",
+      "variableName": "output_jobs",
+      "group": 0,
+      "binding": 5,
+      "resource": {
+        "kind": "buffer",
+        "addressSpace": "storage",
+        "access": "read_write",
+        "recordName": null,
+        "minimumBindingSize": 48
+      },
+      "visibility": [
+        "compute"
+      ]
+    },
+    {
+      "moduleId": "dag-queue",
+      "variableName": "input_payloads",
+      "group": 0,
+      "binding": 6,
+      "resource": {
+        "kind": "buffer",
+        "addressSpace": "storage",
+        "access": "read",
+        "recordName": null,
+        "minimumBindingSize": 4
+      },
+      "visibility": [
+        "compute"
+      ]
+    },
+    {
+      "moduleId": "dag-queue",
+      "variableName": "output_payloads",
+      "group": 0,
+      "binding": 7,
+      "resource": {
+        "kind": "buffer",
+        "addressSpace": "storage",
+        "access": "read_write",
+        "recordName": null,
+        "minimumBindingSize": 4
+      },
+      "visibility": [
+        "compute"
+      ]
+    },
+    {
+      "moduleId": "dag-queue",
+      "variableName": "status",
+      "group": 0,
+      "binding": 8,
+      "resource": {
+        "kind": "buffer",
+        "addressSpace": "storage",
+        "access": "read_write",
+        "recordName": null,
+        "minimumBindingSize": 4
+      },
+      "visibility": [
+        "compute"
+      ]
+    },
+    {
+      "moduleId": "dag-queue",
+      "variableName": "params",
+      "group": 0,
+      "binding": 9,
+      "resource": {
+        "kind": "buffer",
+        "addressSpace": "uniform",
+        "access": "read",
+        "recordName": "Params",
+        "minimumBindingSize": 16
+      },
+      "visibility": [
+        "compute"
+      ]
+    }
+  ],
+  "entryPoints": [
+    {
+      "moduleId": "dag-queue",
+      "name": "enqueue_main",
+      "stage": "compute",
+      "inputs": [
+        {
+          "name": "gid",
+          "locationKind": "builtin",
+          "location": "global_invocation_id",
+          "interpolation": null,
+          "type": {
+            "kind": "vector",
+            "scalar": "u32",
+            "width": 3,
+            "alignment": 16,
+            "byteSize": 12
+          }
+        }
+      ],
+      "outputs": [],
+      "bindingKeys": [
+        "dag-queue:0:0",
+        "dag-queue:0:1",
+        "dag-queue:0:2",
+        "dag-queue:0:3",
+        "dag-queue:0:8",
+        "dag-queue:0:9"
+      ],
+      "overrideNames": [],
+      "workgroupSize": [
+        {
+          "kind": "literal",
+          "value": 64
+        },
+        {
+          "kind": "literal",
+          "value": 1
+        },
+        {
+          "kind": "literal",
+          "value": 1
+        }
+      ],
+      "workgroupStorageSize": 0
+    },
+    {
+      "moduleId": "dag-queue",
+      "name": "dequeue_main",
+      "stage": "compute",
+      "inputs": [
+        {
+          "name": "gid",
+          "locationKind": "builtin",
+          "location": "global_invocation_id",
+          "interpolation": null,
+          "type": {
+            "kind": "vector",
+            "scalar": "u32",
+            "width": 3,
+            "alignment": 16,
+            "byteSize": 12
+          }
+        }
+      ],
+      "outputs": [],
+      "bindingKeys": [
+        "dag-queue:0:0",
+        "dag-queue:0:1",
+        "dag-queue:0:2",
+        "dag-queue:0:5",
+        "dag-queue:0:6",
+        "dag-queue:0:7",
+        "dag-queue:0:8",
+        "dag-queue:0:9"
+      ],
+      "overrideNames": [],
+      "workgroupSize": [
+        {
+          "kind": "literal",
+          "value": 64
+        },
+        {
+          "kind": "literal",
+          "value": 1
+        },
+        {
+          "kind": "literal",
+          "value": 1
+        }
+      ],
+      "workgroupStorageSize": 0
+    }
+  ],
+  "vertexInputs": [],
+  "overrides": [],
+  "modelAbi": {
+    "recordNames": [
+      "JobDesc",
+      "JobNode",
+      "JobState",
+      "Params",
+      "ReadyQueue",
+      "ReadySlot"
+    ],
+    "bindings": [
+      {
+        "source": {
+          "moduleId": "dag-queue",
+          "group": 0,
+          "binding": 9
+        },
+        "resource": {
+          "access": "read",
+          "addressSpace": "uniform",
+          "kind": "buffer",
+          "minimumBindingSize": 16,
+          "recordName": "Params"
+        },
+        "semantic": "queue.params"
+      }
+    ],
+    "vertexInputs": [],
+    "semantics": [
+      {
+        "semantic": "queue.params",
+        "source": {
+          "kind": "binding",
+          "group": 0,
+          "binding": 9,
+          "moduleId": "dag-queue"
+        }
+      },
+      {
+        "semantic": "queue.node-index",
+        "source": {
+          "kind": "record-member",
+          "recordName": "JobDesc",
+          "memberPath": [
+            "node_index"
+          ]
+        }
+      },
+      {
+        "semantic": "queue.job-type",
+        "source": {
+          "kind": "record-member",
+          "recordName": "JobDesc",
+          "memberPath": [
+            "job_type"
+          ]
+        }
+      },
+      {
+        "semantic": "queue.priority",
+        "source": {
+          "kind": "record-member",
+          "recordName": "JobDesc",
+          "memberPath": [
+            "priority"
+          ]
+        }
+      },
+      {
+        "semantic": "queue.payload-offset",
+        "source": {
+          "kind": "record-member",
+          "recordName": "JobDesc",
+          "memberPath": [
+            "payload_offset"
+          ]
+        }
+      },
+      {
+        "semantic": "queue.payload-words",
+        "source": {
+          "kind": "record-member",
+          "recordName": "JobDesc",
+          "memberPath": [
+            "payload_words"
+          ]
+        }
+      },
+      {
+        "semantic": "queue.dependency-count",
+        "source": {
+          "kind": "record-member",
+          "recordName": "JobNode",
+          "memberPath": [
+            "dependency_count"
+          ]
+        }
+      }
+    ]
+  },
+  "modelAbiHash": "7e89700251001e9f969c70bbdedb261dee18d1dbfa8604af000021d5b59ab019",
+  "interfaceAbiHash": "cb3f75fd66b612c56979e67982fd071978dffc086777b9fbbd735a89e5f0404c",
+  "generatedBy": {
+    "packageVersion": "0.1.3",
+    "reflector": "wgsl_reflect",
+    "reflectorVersion": "1.5.0"
+  }
+}

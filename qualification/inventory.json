@@ -1,0 +1,831 @@
+{
+  "contractVersion": "1.0.0",
+  "fragments": [
+    {
+      "fragmentId": "flat-queue",
+      "path": "src/queue.wgsl",
+      "sha256": "8fe3a2e4fe5260310dc0ed38c0d2170469a8312b6b214e29979b6bd7134b561b"
+    },
+    {
+      "fragmentId": "demo-queue",
+      "path": "demo/queue.wgsl",
+      "sha256": "495727b961bf423493e0075a9bb9fca6af70797b416cc07bc4db2633c4236f10"
+    },
+    {
+      "fragmentId": "dag-queue",
+      "path": "src/dag-queue.wgsl",
+      "sha256": "ee71ec57f00652cd4061bebb3cb01a408eb3fbf7ae561b892e28e90f650d9057"
+    }
+  ],
+  "compileUnits": [
+    {
+      "contractVersion": "1.0.0",
+      "compileUnitId": "queue.flat.v1",
+      "fragmentIds": [
+        "flat-queue"
+      ],
+      "modules": [
+        {
+          "moduleId": "flat-queue",
+          "sha256": "8fe3a2e4fe5260310dc0ed38c0d2170469a8312b6b214e29979b6bd7134b561b",
+          "assembly": {
+            "kind": "concat-v1",
+            "fragmentIds": [
+              "flat-queue"
+            ]
+          }
+        }
+      ],
+      "entryPoints": [
+        {
+          "moduleId": "flat-queue",
+          "name": "enqueue_main",
+          "stage": "compute"
+        },
+        {
+          "moduleId": "flat-queue",
+          "name": "dequeue_main",
+          "stage": "compute"
+        }
+      ],
+      "pipelines": [
+        {
+          "kind": "compute",
+          "pipelineId": "flat.enqueue",
+          "layout": {
+            "bindGroups": [
+              {
+                "group": 0,
+                "entries": [
+                  {
+                    "group": 0,
+                    "binding": 0,
+                    "resource": {
+                      "kind": "buffer",
+                      "addressSpace": "storage",
+                      "access": "read_write",
+                      "recordName": "Queue",
+                      "minimumBindingSize": 16
+                    },
+                    "visibility": [
+                      "compute"
+                    ]
+                  },
+                  {
+                    "group": 0,
+                    "binding": 1,
+                    "resource": {
+                      "kind": "buffer",
+                      "addressSpace": "storage",
+                      "access": "read_write",
+                      "recordName": null,
+                      "minimumBindingSize": 16
+                    },
+                    "visibility": [
+                      "compute"
+                    ]
+                  },
+                  {
+                    "group": 0,
+                    "binding": 2,
+                    "resource": {
+                      "kind": "buffer",
+                      "addressSpace": "storage",
+                      "access": "read",
+                      "recordName": null,
+                      "minimumBindingSize": 16
+                    },
+                    "visibility": [
+                      "compute"
+                    ]
+                  },
+                  {
+                    "group": 0,
+                    "binding": 4,
+                    "resource": {
+                      "kind": "buffer",
+                      "addressSpace": "storage",
+                      "access": "read",
+                      "recordName": null,
+                      "minimumBindingSize": 4
+                    },
+                    "visibility": [
+                      "compute"
+                    ]
+                  },
+                  {
+                    "group": 0,
+                    "binding": 6,
+                    "resource": {
+                      "kind": "buffer",
+                      "addressSpace": "storage",
+                      "access": "read_write",
+                      "recordName": null,
+                      "minimumBindingSize": 4
+                    },
+                    "visibility": [
+                      "compute"
+                    ]
+                  },
+                  {
+                    "group": 0,
+                    "binding": 7,
+                    "resource": {
+                      "kind": "buffer",
+                      "addressSpace": "uniform",
+                      "access": "read",
+                      "recordName": "Params",
+                      "minimumBindingSize": 16
+                    },
+                    "visibility": [
+                      "compute"
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          "compute": {
+            "moduleId": "flat-queue",
+            "entryPoint": "enqueue_main",
+            "constants": {}
+          }
+        },
+        {
+          "kind": "compute",
+          "pipelineId": "flat.dequeue",
+          "layout": {
+            "bindGroups": [
+              {
+                "group": 0,
+                "entries": [
+                  {
+                    "group": 0,
+                    "binding": 0,
+                    "resource": {
+                      "kind": "buffer",
+                      "addressSpace": "storage",
+                      "access": "read_write",
+                      "recordName": "Queue",
+                      "minimumBindingSize": 16
+                    },
+                    "visibility": [
+                      "compute"
+                    ]
+                  },
+                  {
+                    "group": 0,
+                    "binding": 1,
+                    "resource": {
+                      "kind": "buffer",
+                      "addressSpace": "storage",
+                      "access": "read_write",
+                      "recordName": null,
+                      "minimumBindingSize": 16
+                    },
+                    "visibility": [
+                      "compute"
+                    ]
+                  },
+                  {
+                    "group": 0,
+                    "binding": 3,
+                    "resource": {
+                      "kind": "buffer",
+                      "addressSpace": "storage",
+                      "access": "read_write",
+                      "recordName": null,
+                      "minimumBindingSize": 16
+                    },
+                    "visibility": [
+                      "compute"
+                    ]
+                  },
+                  {
+                    "group": 0,
+                    "binding": 4,
+                    "resource": {
+                      "kind": "buffer",
+                      "addressSpace": "storage",
+                      "access": "read",
+                      "recordName": null,
+                      "minimumBindingSize": 4
+                    },
+                    "visibility": [
+                      "compute"
+                    ]
+                  },
+                  {
+                    "group": 0,
+                    "binding": 5,
+                    "resource": {
+                      "kind": "buffer",
+                      "addressSpace": "storage",
+                      "access": "read_write",
+                      "recordName": null,
+                      "minimumBindingSize": 4
+                    },
+                    "visibility": [
+                      "compute"
+                    ]
+                  },
+                  {
+                    "group": 0,
+                    "binding": 6,
+                    "resource": {
+                      "kind": "buffer",
+                      "addressSpace": "storage",
+                      "access": "read_write",
+                      "recordName": null,
+                      "minimumBindingSize": 4
+                    },
+                    "visibility": [
+                      "compute"
+                    ]
+                  },
+                  {
+                    "group": 0,
+                    "binding": 7,
+                    "resource": {
+                      "kind": "buffer",
+                      "addressSpace": "uniform",
+                      "access": "read",
+                      "recordName": "Params",
+                      "minimumBindingSize": 16
+                    },
+                    "visibility": [
+                      "compute"
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          "compute": {
+            "moduleId": "flat-queue",
+            "entryPoint": "dequeue_main",
+            "constants": {}
+          }
+        }
+      ],
+      "interfaceRef": {
+        "interfaceId": "gpu-lock-free-queue.flat",
+        "interfaceVersion": "1.0.0",
+        "manifestUri": "https://assets.plasius.co.uk/gpu-interfaces/gpu-lock-free-queue.flat/1.0.0/manifest.json",
+        "manifestSha256": "da22f1d55ba5023f067368b47dd7948b3fad7fa7b83c534652d51aa34b268a8a",
+        "interfaceAbiHash": "f87845ae148393d05fdd614fc1d47b9e2a3347bb4cec83044dcb916ba67514b3",
+        "modelAbiHash": "74ea7ca4d42ed425fa0b8c461541ddfd07a04773d9160abdc553213e2f161b92"
+      },
+      "overrideValues": {},
+      "qualificationFixture": {
+        "fixtureId": "queue.flat.semantic.v1",
+        "path": "flat/fixtures/fixture.json",
+        "sha256": "404ca183c343e2654bb782fc6bf6cfa8b3b8a0b1156c5f853ac0b038f2df5d32"
+      }
+    },
+    {
+      "contractVersion": "1.0.0",
+      "compileUnitId": "queue.demo.v1",
+      "fragmentIds": [
+        "demo-queue"
+      ],
+      "modules": [
+        {
+          "moduleId": "demo-queue",
+          "sha256": "495727b961bf423493e0075a9bb9fca6af70797b416cc07bc4db2633c4236f10",
+          "assembly": {
+            "kind": "concat-v1",
+            "fragmentIds": [
+              "demo-queue"
+            ]
+          }
+        }
+      ],
+      "entryPoints": [
+        {
+          "moduleId": "demo-queue",
+          "name": "enqueue_main",
+          "stage": "compute"
+        },
+        {
+          "moduleId": "demo-queue",
+          "name": "dequeue_main",
+          "stage": "compute"
+        }
+      ],
+      "pipelines": [
+        {
+          "kind": "compute",
+          "pipelineId": "demo.enqueue",
+          "layout": {
+            "bindGroups": [
+              {
+                "group": 0,
+                "entries": [
+                  {
+                    "group": 0,
+                    "binding": 0,
+                    "resource": {
+                      "kind": "buffer",
+                      "addressSpace": "storage",
+                      "access": "read_write",
+                      "recordName": "Queue",
+                      "minimumBindingSize": 16
+                    },
+                    "visibility": [
+                      "compute"
+                    ]
+                  },
+                  {
+                    "group": 0,
+                    "binding": 1,
+                    "resource": {
+                      "kind": "buffer",
+                      "addressSpace": "storage",
+                      "access": "read_write",
+                      "recordName": null,
+                      "minimumBindingSize": 16
+                    },
+                    "visibility": [
+                      "compute"
+                    ]
+                  },
+                  {
+                    "group": 0,
+                    "binding": 2,
+                    "resource": {
+                      "kind": "buffer",
+                      "addressSpace": "storage",
+                      "access": "read",
+                      "recordName": null,
+                      "minimumBindingSize": 16
+                    },
+                    "visibility": [
+                      "compute"
+                    ]
+                  },
+                  {
+                    "group": 0,
+                    "binding": 4,
+                    "resource": {
+                      "kind": "buffer",
+                      "addressSpace": "storage",
+                      "access": "read",
+                      "recordName": null,
+                      "minimumBindingSize": 4
+                    },
+                    "visibility": [
+                      "compute"
+                    ]
+                  },
+                  {
+                    "group": 0,
+                    "binding": 6,
+                    "resource": {
+                      "kind": "buffer",
+                      "addressSpace": "storage",
+                      "access": "read_write",
+                      "recordName": null,
+                      "minimumBindingSize": 4
+                    },
+                    "visibility": [
+                      "compute"
+                    ]
+                  },
+                  {
+                    "group": 0,
+                    "binding": 7,
+                    "resource": {
+                      "kind": "buffer",
+                      "addressSpace": "uniform",
+                      "access": "read",
+                      "recordName": "Params",
+                      "minimumBindingSize": 16
+                    },
+                    "visibility": [
+                      "compute"
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          "compute": {
+            "moduleId": "demo-queue",
+            "entryPoint": "enqueue_main",
+            "constants": {}
+          }
+        },
+        {
+          "kind": "compute",
+          "pipelineId": "demo.dequeue",
+          "layout": {
+            "bindGroups": [
+              {
+                "group": 0,
+                "entries": [
+                  {
+                    "group": 0,
+                    "binding": 0,
+                    "resource": {
+                      "kind": "buffer",
+                      "addressSpace": "storage",
+                      "access": "read_write",
+                      "recordName": "Queue",
+                      "minimumBindingSize": 16
+                    },
+                    "visibility": [
+                      "compute"
+                    ]
+                  },
+                  {
+                    "group": 0,
+                    "binding": 1,
+                    "resource": {
+                      "kind": "buffer",
+                      "addressSpace": "storage",
+                      "access": "read_write",
+                      "recordName": null,
+                      "minimumBindingSize": 16
+                    },
+                    "visibility": [
+                      "compute"
+                    ]
+                  },
+                  {
+                    "group": 0,
+                    "binding": 3,
+                    "resource": {
+                      "kind": "buffer",
+                      "addressSpace": "storage",
+                      "access": "read_write",
+                      "recordName": null,
+                      "minimumBindingSize": 16
+                    },
+                    "visibility": [
+                      "compute"
+                    ]
+                  },
+                  {
+                    "group": 0,
+                    "binding": 4,
+                    "resource": {
+                      "kind": "buffer",
+                      "addressSpace": "storage",
+                      "access": "read",
+                      "recordName": null,
+                      "minimumBindingSize": 4
+                    },
+                    "visibility": [
+                      "compute"
+                    ]
+                  },
+                  {
+                    "group": 0,
+                    "binding": 5,
+                    "resource": {
+                      "kind": "buffer",
+                      "addressSpace": "storage",
+                      "access": "read_write",
+                      "recordName": null,
+                      "minimumBindingSize": 4
+                    },
+                    "visibility": [
+                      "compute"
+                    ]
+                  },
+                  {
+                    "group": 0,
+                    "binding": 6,
+                    "resource": {
+                      "kind": "buffer",
+                      "addressSpace": "storage",
+                      "access": "read_write",
+                      "recordName": null,
+                      "minimumBindingSize": 4
+                    },
+                    "visibility": [
+                      "compute"
+                    ]
+                  },
+                  {
+                    "group": 0,
+                    "binding": 7,
+                    "resource": {
+                      "kind": "buffer",
+                      "addressSpace": "uniform",
+                      "access": "read",
+                      "recordName": "Params",
+                      "minimumBindingSize": 16
+                    },
+                    "visibility": [
+                      "compute"
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          "compute": {
+            "moduleId": "demo-queue",
+            "entryPoint": "dequeue_main",
+            "constants": {}
+          }
+        }
+      ],
+      "interfaceRef": {
+        "interfaceId": "gpu-lock-free-queue.demo",
+        "interfaceVersion": "1.0.0",
+        "manifestUri": "https://assets.plasius.co.uk/gpu-interfaces/gpu-lock-free-queue.demo/1.0.0/manifest.json",
+        "manifestSha256": "2bb7ee3dbac77513a70b7f61eff53a6679aed95842702f7644578f465b3ffe0b",
+        "interfaceAbiHash": "73d49ceaa9f15e8dc18425e155188dc820970096ab99675758f0eb87e9a417f7",
+        "modelAbiHash": "74ea7ca4d42ed425fa0b8c461541ddfd07a04773d9160abdc553213e2f161b92"
+      },
+      "overrideValues": {},
+      "qualificationFixture": {
+        "fixtureId": "queue.demo.semantic.v1",
+        "path": "demo/fixtures/fixture.json",
+        "sha256": "df7b9c1b3a63eb76183753042122315626f94a521e0ef0c95ed50f1d53488c06"
+      }
+    },
+    {
+      "contractVersion": "1.0.0",
+      "compileUnitId": "queue.dag.v1",
+      "fragmentIds": [
+        "dag-queue"
+      ],
+      "modules": [
+        {
+          "moduleId": "dag-queue",
+          "sha256": "ee71ec57f00652cd4061bebb3cb01a408eb3fbf7ae561b892e28e90f650d9057",
+          "assembly": {
+            "kind": "concat-v1",
+            "fragmentIds": [
+              "dag-queue"
+            ]
+          }
+        }
+      ],
+      "entryPoints": [
+        {
+          "moduleId": "dag-queue",
+          "name": "enqueue_main",
+          "stage": "compute"
+        },
+        {
+          "moduleId": "dag-queue",
+          "name": "dequeue_main",
+          "stage": "compute"
+        }
+      ],
+      "pipelines": [
+        {
+          "kind": "compute",
+          "pipelineId": "dag.enqueue",
+          "layout": {
+            "bindGroups": [
+              {
+                "group": 0,
+                "entries": [
+                  {
+                    "group": 0,
+                    "binding": 0,
+                    "resource": {
+                      "kind": "buffer",
+                      "addressSpace": "storage",
+                      "access": "read_write",
+                      "recordName": null,
+                      "minimumBindingSize": 16
+                    },
+                    "visibility": [
+                      "compute"
+                    ]
+                  },
+                  {
+                    "group": 0,
+                    "binding": 1,
+                    "resource": {
+                      "kind": "buffer",
+                      "addressSpace": "storage",
+                      "access": "read_write",
+                      "recordName": null,
+                      "minimumBindingSize": 16
+                    },
+                    "visibility": [
+                      "compute"
+                    ]
+                  },
+                  {
+                    "group": 0,
+                    "binding": 2,
+                    "resource": {
+                      "kind": "buffer",
+                      "addressSpace": "storage",
+                      "access": "read",
+                      "recordName": null,
+                      "minimumBindingSize": 32
+                    },
+                    "visibility": [
+                      "compute"
+                    ]
+                  },
+                  {
+                    "group": 0,
+                    "binding": 3,
+                    "resource": {
+                      "kind": "buffer",
+                      "addressSpace": "storage",
+                      "access": "read_write",
+                      "recordName": null,
+                      "minimumBindingSize": 16
+                    },
+                    "visibility": [
+                      "compute"
+                    ]
+                  },
+                  {
+                    "group": 0,
+                    "binding": 8,
+                    "resource": {
+                      "kind": "buffer",
+                      "addressSpace": "storage",
+                      "access": "read_write",
+                      "recordName": null,
+                      "minimumBindingSize": 4
+                    },
+                    "visibility": [
+                      "compute"
+                    ]
+                  },
+                  {
+                    "group": 0,
+                    "binding": 9,
+                    "resource": {
+                      "kind": "buffer",
+                      "addressSpace": "uniform",
+                      "access": "read",
+                      "recordName": "Params",
+                      "minimumBindingSize": 16
+                    },
+                    "visibility": [
+                      "compute"
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          "compute": {
+            "moduleId": "dag-queue",
+            "entryPoint": "enqueue_main",
+            "constants": {}
+          }
+        },
+        {
+          "kind": "compute",
+          "pipelineId": "dag.dequeue",
+          "layout": {
+            "bindGroups": [
+              {
+                "group": 0,
+                "entries": [
+                  {
+                    "group": 0,
+                    "binding": 0,
+                    "resource": {
+                      "kind": "buffer",
+                      "addressSpace": "storage",
+                      "access": "read_write",
+                      "recordName": null,
+                      "minimumBindingSize": 16
+                    },
+                    "visibility": [
+                      "compute"
+                    ]
+                  },
+                  {
+                    "group": 0,
+                    "binding": 1,
+                    "resource": {
+                      "kind": "buffer",
+                      "addressSpace": "storage",
+                      "access": "read_write",
+                      "recordName": null,
+                      "minimumBindingSize": 16
+                    },
+                    "visibility": [
+                      "compute"
+                    ]
+                  },
+                  {
+                    "group": 0,
+                    "binding": 2,
+                    "resource": {
+                      "kind": "buffer",
+                      "addressSpace": "storage",
+                      "access": "read",
+                      "recordName": null,
+                      "minimumBindingSize": 32
+                    },
+                    "visibility": [
+                      "compute"
+                    ]
+                  },
+                  {
+                    "group": 0,
+                    "binding": 5,
+                    "resource": {
+                      "kind": "buffer",
+                      "addressSpace": "storage",
+                      "access": "read_write",
+                      "recordName": null,
+                      "minimumBindingSize": 48
+                    },
+                    "visibility": [
+                      "compute"
+                    ]
+                  },
+                  {
+                    "group": 0,
+                    "binding": 6,
+                    "resource": {
+                      "kind": "buffer",
+                      "addressSpace": "storage",
+                      "access": "read",
+                      "recordName": null,
+                      "minimumBindingSize": 4
+                    },
+                    "visibility": [
+                      "compute"
+                    ]
+                  },
+                  {
+                    "group": 0,
+                    "binding": 7,
+                    "resource": {
+                      "kind": "buffer",
+                      "addressSpace": "storage",
+                      "access": "read_write",
+                      "recordName": null,
+                      "minimumBindingSize": 4
+                    },
+                    "visibility": [
+                      "compute"
+                    ]
+                  },
+                  {
+                    "group": 0,
+                    "binding": 8,
+                    "resource": {
+                      "kind": "buffer",
+                      "addressSpace": "storage",
+                      "access": "read_write",
+                      "recordName": null,
+                      "minimumBindingSize": 4
+                    },
+                    "visibility": [
+                      "compute"
+                    ]
+                  },
+                  {
+                    "group": 0,
+                    "binding": 9,
+                    "resource": {
+                      "kind": "buffer",
+                      "addressSpace": "uniform",
+                      "access": "read",
+                      "recordName": "Params",
+                      "minimumBindingSize": 16
+                    },
+                    "visibility": [
+                      "compute"
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          "compute": {
+            "moduleId": "dag-queue",
+            "entryPoint": "dequeue_main",
+            "constants": {}
+          }
+        }
+      ],
+      "interfaceRef": {
+        "interfaceId": "gpu-lock-free-queue.dag",
+        "interfaceVersion": "1.0.0",
+        "manifestUri": "https://assets.plasius.co.uk/gpu-interfaces/gpu-lock-free-queue.dag/1.0.0/manifest.json",
+        "manifestSha256": "850ccace2c6617ba7bf44671e0913914283d665d05ba52be9d0b93b0ef37d292",
+        "interfaceAbiHash": "cb3f75fd66b612c56979e67982fd071978dffc086777b9fbbd735a89e5f0404c",
+        "modelAbiHash": "7e89700251001e9f969c70bbdedb261dee18d1dbfa8604af000021d5b59ab019"
+      },
+      "overrideValues": {},
+      "qualificationFixture": {
+        "fixtureId": "queue.dag.semantic.v1",
+        "path": "dag/fixtures/fixture.json",
+        "sha256": "18f97ab900a72bc6eee51fb92ea0a4adcb6de445462e5808487733cde9f7e2f4"
+      }
+    }
+  ]
+}
