@@ -19,6 +19,7 @@ The format is based on **[Keep a Changelog](https://keepachangelog.com/en/1.1.0/
 
 - **Fixed**
   - Made Chromium SwiftShader qualification select the WebGPU adapter explicitly and verify the effective browser command line plus fallback-adapter identity.
+  - Stopped the DAG shader from copying storage records containing atomics by value, allowing strict WebGPU implementations to compile the module.
   - (placeholder)
 
 - **Security**

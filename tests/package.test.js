@@ -86,6 +86,22 @@ test("dag queue WGSL exposes ready queues and dependency completion helpers", ()
   assert.ok(wgsl.includes("priority_step"));
 });
 
+test("dag queue WGSL never copies storage records containing atomics by value", () => {
+  const wgsl = fs.readFileSync(
+    path.resolve(projectRoot, "src", "dag-queue.wgsl"),
+    "utf8"
+  );
+
+  const wholeRecordLoads = wgsl.match(
+    /^\s*(?:let|var|const)\s+\w+(?:\s*:[^=;]+)?\s*=\s*(?:ready_queues|ready_slots|job_states)\s*\[[^\]\n]+\]\s*;/gm,
+  );
+  assert.deepEqual(
+    wholeRecordLoads,
+    null,
+    "storage records containing atomics must be accessed field-by-field",
+  );
+});
+
 test("demo imports gpu-shared through the public package surface", () => {
   const demoSource = fs.readFileSync(path.resolve(projectRoot, "demo", "main.js"), "utf8");
   const demoHtml = fs.readFileSync(path.resolve(projectRoot, "demo", "index.html"), "utf8");

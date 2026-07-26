@@ -5,7 +5,7 @@
   "modules": [
     {
       "moduleId": "dag-queue",
-      "sha256": "44f8021052a2f749dbfc17475ef647c4678dd6125220b0d0a7ed94a444630cea"
+      "sha256": "ee71ec57f00652cd4061bebb3cb01a408eb3fbf7ae561b892e28e90f650d9057"
     }
   ],
   "records": [

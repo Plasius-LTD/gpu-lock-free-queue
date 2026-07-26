@@ -6,8 +6,8 @@
     {
       "moduleId": "dag-queue",
       "uri": "https://assets.plasius.co.uk/shaders/gpu-lock-free-queue.dag/1.0.0/dag-queue.wgsl",
-      "byteLength": 7653,
-      "sha256": "44f8021052a2f749dbfc17475ef647c4678dd6125220b0d0a7ed94a444630cea",
+      "byteLength": 7795,
+      "sha256": "ee71ec57f00652cd4061bebb3cb01a408eb3fbf7ae561b892e28e90f650d9057",
       "contentType": "text/wgsl; charset=utf-8"
     }
   ],
@@ -15,7 +15,7 @@
     "interfaceId": "gpu-lock-free-queue.dag",
     "interfaceVersion": "1.0.0",
     "manifestUri": "https://assets.plasius.co.uk/gpu-interfaces/gpu-lock-free-queue.dag/1.0.0/manifest.json",
-    "manifestSha256": "42344f01c7f701907465b76fe19363559f19538245c81d139d7e2a04b3c31179",
+    "manifestSha256": "850ccace2c6617ba7bf44671e0913914283d665d05ba52be9d0b93b0ef37d292",
     "interfaceAbiHash": "cb3f75fd66b612c56979e67982fd071978dffc086777b9fbbd735a89e5f0404c",
     "modelAbiHash": "7e89700251001e9f969c70bbdedb261dee18d1dbfa8604af000021d5b59ab019"
   },
@@ -266,7 +266,7 @@
     {
       "interfaceId": "gpu-lock-free-queue.dag",
       "interfaceVersion": "1.0.0",
-      "manifestSha256": "42344f01c7f701907465b76fe19363559f19538245c81d139d7e2a04b3c31179",
+      "manifestSha256": "850ccace2c6617ba7bf44671e0913914283d665d05ba52be9d0b93b0ef37d292",
       "interfaceAbiHash": "cb3f75fd66b612c56979e67982fd071978dffc086777b9fbbd735a89e5f0404c",
       "modelAbiHash": "7e89700251001e9f969c70bbdedb261dee18d1dbfa8604af000021d5b59ab019"
     }

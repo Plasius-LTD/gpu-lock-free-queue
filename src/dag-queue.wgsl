@@ -66,14 +66,15 @@ fn queue_config_valid() -> bool {
     return false;
   }
   for (var i: u32 = 0u; i < params.ready_queue_count; i = i + 1u) {
-    let queue = ready_queues[i];
-    if (queue.capacity == 0u) {
+    let queue_capacity = ready_queues[i].capacity;
+    let queue_mask = ready_queues[i].mask;
+    if (queue_capacity == 0u) {
       return false;
     }
-    if ((queue.capacity & (queue.capacity - 1u)) != 0u) {
+    if ((queue_capacity & (queue_capacity - 1u)) != 0u) {
       return false;
     }
-    if (queue.mask != queue.capacity - 1u) {
+    if (queue_mask != queue_capacity - 1u) {
       return false;
     }
   }
@@ -120,11 +121,11 @@ fn slot_base(queue_index: u32) -> u32 {
 }
 
 fn enqueue_ready(queue_index: u32, node_index: u32) -> u32 {
-  let queue = ready_queues[queue_index];
+  let queue_mask = ready_queues[queue_index].mask;
   let base = slot_base(queue_index);
   for (var attempt: u32 = 0u; attempt < MAX_RETRIES; attempt = attempt + 1u) {
     let t = atomicLoad(&ready_queues[queue_index].tail);
-    let local_slot = t & queue.mask;
+    let local_slot = t & queue_mask;
     let slot_index = base + local_slot;
     let seq = atomicLoad(&ready_slots[slot_index].seq);
     let diff = i32(seq) - i32(t);
@@ -147,12 +148,13 @@ fn enqueue_ready(queue_index: u32, node_index: u32) -> u32 {
 fn dequeue_ready(output_index: u32) -> u32 {
   for (var priority_step: u32 = 0u; priority_step < params.ready_queue_count; priority_step = priority_step + 1u) {
     let queue_index = params.ready_queue_count - 1u - priority_step;
-    let queue = ready_queues[queue_index];
+    let queue_capacity = ready_queues[queue_index].capacity;
+    let queue_mask = ready_queues[queue_index].mask;
     let base = slot_base(queue_index);
 
     for (var attempt: u32 = 0u; attempt < MAX_RETRIES; attempt = attempt + 1u) {
       let h = atomicLoad(&ready_queues[queue_index].head);
-      let local_slot = h & queue.mask;
+      let local_slot = h & queue_mask;
       let slot_index = base + local_slot;
       let seq = atomicLoad(&ready_slots[slot_index].seq);
       let diff = i32(seq) - i32(h + 1u);
@@ -176,7 +178,7 @@ fn dequeue_ready(output_index: u32) -> u32 {
           output_jobs[output_index].payload_offset = node.payload_offset;
           output_jobs[output_index].payload_words = node.payload_words;
           output_jobs[output_index].padding = vec3<u32>(0u, 0u, 0u);
-          atomicStore(&ready_slots[slot_index].seq, h + queue.capacity);
+          atomicStore(&ready_slots[slot_index].seq, h + queue_capacity);
           return 1u;
         }
       } else if (diff < 0) {
