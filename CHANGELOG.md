@@ -9,15 +9,20 @@ The format is based on **[Keep a Changelog](https://keepachangelog.com/en/1.1.0/
 ## [Unreleased]
 
 - **Added**
+  - Added reflected compile units and bounded WebGPU semantic-readback qualification for all three repository WGSL assets, plus fail-closed validation of complete physical-matrix evidence.
   - (placeholder)
 
 - **Changed**
+  - Advanced `@plasius/gpu-shared` to the available clean `^1.0.14` package line.
+  - Made final WGSL the source of truth for queue layouts and renamed padding members to stable schema-visible names without changing their byte layout.
   - (placeholder)
 
 - **Fixed**
   - (placeholder)
 
 - **Security**
+  - Added fail-closed source and npm-package admission for the administrative contributor registry and pinned the CI/CD runtime to Node.js 24.18.0 LTS.
+  - Pinned patched `brace-expansion` and `esbuild` transitive releases so the complete dependency audit is clean.
   - (placeholder)
 
 ## [0.3.3] - 2026-07-01

@@ -1,0 +1,347 @@
+{
+  "contractVersion": "1.0.0",
+  "inventory": {
+    "contractVersion": "1.0.0",
+    "fragments": [
+      {
+        "fragmentId": "demo-queue",
+        "path": "fragments/queue.wgsl",
+        "sha256": "495727b961bf423493e0075a9bb9fca6af70797b416cc07bc4db2633c4236f10"
+      }
+    ],
+    "compileUnits": [
+      {
+        "contractVersion": "1.0.0",
+        "compileUnitId": "queue.demo.v1",
+        "fragmentIds": [
+          "demo-queue"
+        ],
+        "modules": [
+          {
+            "moduleId": "demo-queue",
+            "sha256": "495727b961bf423493e0075a9bb9fca6af70797b416cc07bc4db2633c4236f10",
+            "assembly": {
+              "kind": "concat-v1",
+              "fragmentIds": [
+                "demo-queue"
+              ]
+            }
+          }
+        ],
+        "entryPoints": [
+          {
+            "moduleId": "demo-queue",
+            "name": "enqueue_main",
+            "stage": "compute"
+          },
+          {
+            "moduleId": "demo-queue",
+            "name": "dequeue_main",
+            "stage": "compute"
+          }
+        ],
+        "pipelines": [
+          {
+            "kind": "compute",
+            "pipelineId": "demo.enqueue",
+            "layout": {
+              "bindGroups": [
+                {
+                  "group": 0,
+                  "entries": [
+                    {
+                      "group": 0,
+                      "binding": 0,
+                      "resource": {
+                        "kind": "buffer",
+                        "addressSpace": "storage",
+                        "access": "read_write",
+                        "recordName": "Queue",
+                        "minimumBindingSize": 16
+                      },
+                      "visibility": [
+                        "compute"
+                      ]
+                    },
+                    {
+                      "group": 0,
+                      "binding": 1,
+                      "resource": {
+                        "kind": "buffer",
+                        "addressSpace": "storage",
+                        "access": "read_write",
+                        "recordName": null,
+                        "minimumBindingSize": 16
+                      },
+                      "visibility": [
+                        "compute"
+                      ]
+                    },
+                    {
+                      "group": 0,
+                      "binding": 2,
+                      "resource": {
+                        "kind": "buffer",
+                        "addressSpace": "storage",
+                        "access": "read",
+                        "recordName": null,
+                        "minimumBindingSize": 16
+                      },
+                      "visibility": [
+                        "compute"
+                      ]
+                    },
+                    {
+                      "group": 0,
+                      "binding": 4,
+                      "resource": {
+                        "kind": "buffer",
+                        "addressSpace": "storage",
+                        "access": "read",
+                        "recordName": null,
+                        "minimumBindingSize": 4
+                      },
+                      "visibility": [
+                        "compute"
+                      ]
+                    },
+                    {
+                      "group": 0,
+                      "binding": 6,
+                      "resource": {
+                        "kind": "buffer",
+                        "addressSpace": "storage",
+                        "access": "read_write",
+                        "recordName": null,
+                        "minimumBindingSize": 4
+                      },
+                      "visibility": [
+                        "compute"
+                      ]
+                    },
+                    {
+                      "group": 0,
+                      "binding": 7,
+                      "resource": {
+                        "kind": "buffer",
+                        "addressSpace": "uniform",
+                        "access": "read",
+                        "recordName": "Params",
+                        "minimumBindingSize": 16
+                      },
+                      "visibility": [
+                        "compute"
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            "compute": {
+              "moduleId": "demo-queue",
+              "entryPoint": "enqueue_main",
+              "constants": {}
+            }
+          },
+          {
+            "kind": "compute",
+            "pipelineId": "demo.dequeue",
+            "layout": {
+              "bindGroups": [
+                {
+                  "group": 0,
+                  "entries": [
+                    {
+                      "group": 0,
+                      "binding": 0,
+                      "resource": {
+                        "kind": "buffer",
+                        "addressSpace": "storage",
+                        "access": "read_write",
+                        "recordName": "Queue",
+                        "minimumBindingSize": 16
+                      },
+                      "visibility": [
+                        "compute"
+                      ]
+                    },
+                    {
+                      "group": 0,
+                      "binding": 1,
+                      "resource": {
+                        "kind": "buffer",
+                        "addressSpace": "storage",
+                        "access": "read_write",
+                        "recordName": null,
+                        "minimumBindingSize": 16
+                      },
+                      "visibility": [
+                        "compute"
+                      ]
+                    },
+                    {
+                      "group": 0,
+                      "binding": 3,
+                      "resource": {
+                        "kind": "buffer",
+                        "addressSpace": "storage",
+                        "access": "read_write",
+                        "recordName": null,
+                        "minimumBindingSize": 16
+                      },
+                      "visibility": [
+                        "compute"
+                      ]
+                    },
+                    {
+                      "group": 0,
+                      "binding": 4,
+                      "resource": {
+                        "kind": "buffer",
+                        "addressSpace": "storage",
+                        "access": "read",
+                        "recordName": null,
+                        "minimumBindingSize": 4
+                      },
+                      "visibility": [
+                        "compute"
+                      ]
+                    },
+                    {
+                      "group": 0,
+                      "binding": 5,
+                      "resource": {
+                        "kind": "buffer",
+                        "addressSpace": "storage",
+                        "access": "read_write",
+                        "recordName": null,
+                        "minimumBindingSize": 4
+                      },
+                      "visibility": [
+                        "compute"
+                      ]
+                    },
+                    {
+                      "group": 0,
+                      "binding": 6,
+                      "resource": {
+                        "kind": "buffer",
+                        "addressSpace": "storage",
+                        "access": "read_write",
+                        "recordName": null,
+                        "minimumBindingSize": 4
+                      },
+                      "visibility": [
+                        "compute"
+                      ]
+                    },
+                    {
+                      "group": 0,
+                      "binding": 7,
+                      "resource": {
+                        "kind": "buffer",
+                        "addressSpace": "uniform",
+                        "access": "read",
+                        "recordName": "Params",
+                        "minimumBindingSize": 16
+                      },
+                      "visibility": [
+                        "compute"
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            "compute": {
+              "moduleId": "demo-queue",
+              "entryPoint": "dequeue_main",
+              "constants": {}
+            }
+          }
+        ],
+        "interfaceRef": {
+          "interfaceId": "gpu-lock-free-queue.demo",
+          "interfaceVersion": "1.0.0",
+          "manifestUri": "https://assets.plasius.co.uk/gpu-interfaces/gpu-lock-free-queue.demo/1.0.0/manifest.json",
+          "manifestSha256": "2bb7ee3dbac77513a70b7f61eff53a6679aed95842702f7644578f465b3ffe0b",
+          "interfaceAbiHash": "73d49ceaa9f15e8dc18425e155188dc820970096ab99675758f0eb87e9a417f7",
+          "modelAbiHash": "74ea7ca4d42ed425fa0b8c461541ddfd07a04773d9160abdc553213e2f161b92"
+        },
+        "overrideValues": {},
+        "qualificationFixture": {
+          "fixtureId": "queue.demo.semantic.v1",
+          "path": "fixtures/fixture.json",
+          "sha256": "df7b9c1b3a63eb76183753042122315626f94a521e0ef0c95ed50f1d53488c06"
+        }
+      }
+    ]
+  },
+  "subject": {
+    "shaderManifestCore": {
+      "shaderId": "gpu-lock-free-queue.demo",
+      "version": "1.0.0",
+      "sha256": "3d3711b218e54bba5768973770e093f219edcae7fa91e54937f61fede56cbb86"
+    },
+    "compileUnitInventorySha256": "940338a25b8c8bb1a8e6a9e0f31d2313fd443b9ad2ae2f840f68cee5b4eee8bb",
+    "shaderAbiHash": "9920c10520a79f3d8b7dfd58f163ab6ab5a17b005c90b9d00b7a6b08a69a96a8",
+    "interfaceManifestSha256": "2bb7ee3dbac77513a70b7f61eff53a6679aed95842702f7644578f465b3ffe0b",
+    "modelAbiHashes": [
+      "74ea7ca4d42ed425fa0b8c461541ddfd07a04773d9160abdc553213e2f161b92"
+    ],
+    "modules": [
+      {
+        "moduleId": "demo-queue",
+        "sha256": "495727b961bf423493e0075a9bb9fca6af70797b416cc07bc4db2633c4236f10"
+      }
+    ],
+    "requiredCompileUnitIds": [
+      "queue.demo.v1"
+    ],
+    "requiredCellIds": [
+      "android-adreno-chrome-vulkan",
+      "android-mali-chrome-vulkan",
+      "chromeos-arm-chrome-vulkan",
+      "chromeos-intel-chrome-vulkan",
+      "ios-iphone-safari-metal",
+      "ipados-ipad-safari-metal",
+      "macos-apple-chrome-metal",
+      "macos-apple-firefox-metal",
+      "macos-apple-safari-metal",
+      "swiftshader.chromium.ubuntu-x64",
+      "ubuntu-intel-chrome-vulkan",
+      "ubuntu-nvidia-chrome-vulkan",
+      "visionos-safari-metal",
+      "win11-amd-firefox-d3d12",
+      "win11-intel-chrome-d3d12",
+      "win11-nvidia-edge-d3d12"
+    ]
+  },
+  "shaderManifestCorePath": "manifests/shader-core.json",
+  "gpuInterfaceManifest": {
+    "path": "manifests/gpu-interface.json",
+    "sha256": "2bb7ee3dbac77513a70b7f61eff53a6679aed95842702f7644578f465b3ffe0b"
+  },
+  "modelCompatibilityFixtures": [
+    {
+      "fixtureId": "demo.queue-model.v1",
+      "path": "fixtures/model-compatibility.json",
+      "sha256": "8a060b245b09e3cbad748b056a7cd8d462094c3ef578b283c797fe03610a1f3c"
+    }
+  ],
+  "modules": [
+    {
+      "moduleId": "demo-queue",
+      "path": "modules/queue.wgsl",
+      "sha256": "495727b961bf423493e0075a9bb9fca6af70797b416cc07bc4db2633c4236f10"
+    }
+  ],
+  "fixtures": [
+    {
+      "fixtureId": "queue.demo.semantic.v1",
+      "path": "fixtures/fixture.json",
+      "sha256": "df7b9c1b3a63eb76183753042122315626f94a521e0ef0c95ed50f1d53488c06",
+      "kind": "qualification-fixture"
+    }
+  ]
+}

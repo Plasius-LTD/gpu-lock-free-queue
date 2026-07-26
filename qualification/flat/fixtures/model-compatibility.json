@@ -1,0 +1,25 @@
+{
+  "contractVersion": "1.0.0",
+  "fixtureId": "flat.queue-model.v1",
+  "model": {
+    "modelId": "gpu-lock-free-queue.flat.qualification-model",
+    "version": "1.0.0",
+    "gpuInterface": {
+      "interfaceId": "gpu-lock-free-queue.flat",
+      "interfaceVersion": "1.0.0",
+      "manifestUri": "https://assets.plasius.co.uk/gpu-interfaces/gpu-lock-free-queue.flat/1.0.0/manifest.json",
+      "manifestSha256": "da22f1d55ba5023f067368b47dd7948b3fad7fa7b83c534652d51aa34b268a8a",
+      "interfaceAbiHash": "f87845ae148393d05fdd614fc1d47b9e2a3347bb4cec83044dcb916ba67514b3",
+      "modelAbiHash": "74ea7ca4d42ed425fa0b8c461541ddfd07a04773d9160abdc553213e2f161b92"
+    },
+    "modelAbiHash": "74ea7ca4d42ed425fa0b8c461541ddfd07a04773d9160abdc553213e2f161b92",
+    "providedSemantics": [
+      "queue.header",
+      "queue.job-type",
+      "queue.params",
+      "queue.payload-offset",
+      "queue.payload-words"
+    ],
+    "defaultStyleProfile": null
+  }
+}

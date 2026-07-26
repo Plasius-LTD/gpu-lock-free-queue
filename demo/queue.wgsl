@@ -16,13 +16,13 @@ struct JobMeta {
   job_type: u32,
   payload_offset: u32,
   payload_words: u32,
-  _pad: u32,
+  padding: u32,
 };
 
 struct Params {
   job_count: u32,
   output_stride: u32,
-  _pad: vec2<u32>,
+  padding: vec2<u32>,
 };
 
 @group(0) @binding(0) var<storage, read_write> queue: Queue;
@@ -128,7 +128,7 @@ fn dequeue(idx: u32) -> u32 {
         output_jobs[idx].job_type = job_type;
         output_jobs[idx].payload_offset = payload_offset;
         output_jobs[idx].payload_words = payload_words;
-        output_jobs[idx]._pad = 0u;
+        output_jobs[idx].padding = 0u;
         atomicStore(&slots[slot_index].seq, h + queue.capacity);
         return 1u;
       }

@@ -1,0 +1,482 @@
+{
+  "contractVersion": "1.0.0",
+  "fixtureId": "queue.dag.semantic.v1",
+  "resources": [
+    {
+      "kind": "buffer",
+      "resourceId": "ready-queues",
+      "byteLength": 32,
+      "usage": [
+        "storage",
+        "copy-src",
+        "copy-dst"
+      ],
+      "initialData": {
+        "path": "data/ready-queues.bin",
+        "sha256": "38e8c702fb468404ce86b5d7f741d14006eb04d79e2d61f375ab7c182a111127"
+      }
+    },
+    {
+      "kind": "buffer",
+      "resourceId": "ready-slots",
+      "byteLength": 128,
+      "usage": [
+        "storage",
+        "copy-dst"
+      ],
+      "initialData": {
+        "path": "data/ready-slots.bin",
+        "sha256": "ed0bfe2936553b412295483285a2ec4d135db742c28270d98c901175b0f1eb18"
+      }
+    },
+    {
+      "kind": "buffer",
+      "resourceId": "job-nodes",
+      "byteLength": 32,
+      "usage": [
+        "storage",
+        "copy-dst"
+      ],
+      "initialData": {
+        "path": "data/job-nodes.bin",
+        "sha256": "bc7d12b1428b3decd5e28aacd0cfcc1b2ee322dcb4fabd061384c9003c4c6230"
+      }
+    },
+    {
+      "kind": "buffer",
+      "resourceId": "job-states",
+      "byteLength": 16,
+      "usage": [
+        "storage",
+        "copy-src"
+      ],
+      "initialData": null
+    },
+    {
+      "kind": "buffer",
+      "resourceId": "job-dependents",
+      "byteLength": 4,
+      "usage": [
+        "storage",
+        "copy-dst"
+      ],
+      "initialData": {
+        "path": "data/job-dependents.bin",
+        "sha256": "df3f619804a92fdb4057192dc43dd748ea778adc52bc498ce80524c014b81119"
+      }
+    },
+    {
+      "kind": "buffer",
+      "resourceId": "output-jobs",
+      "byteLength": 48,
+      "usage": [
+        "storage",
+        "copy-src"
+      ],
+      "initialData": null
+    },
+    {
+      "kind": "buffer",
+      "resourceId": "input-payloads",
+      "byteLength": 8,
+      "usage": [
+        "storage",
+        "copy-dst"
+      ],
+      "initialData": {
+        "path": "data/input-payloads.bin",
+        "sha256": "761a15cfb3b79a6c7bb2f74c32851ef6c2f5a7b3176a31586d24c8a5e32385aa"
+      }
+    },
+    {
+      "kind": "buffer",
+      "resourceId": "output-payloads",
+      "byteLength": 8,
+      "usage": [
+        "storage",
+        "copy-src"
+      ],
+      "initialData": null
+    },
+    {
+      "kind": "buffer",
+      "resourceId": "enqueue-status",
+      "byteLength": 4,
+      "usage": [
+        "storage",
+        "copy-src"
+      ],
+      "initialData": null
+    },
+    {
+      "kind": "buffer",
+      "resourceId": "dequeue-status",
+      "byteLength": 4,
+      "usage": [
+        "storage",
+        "copy-src"
+      ],
+      "initialData": null
+    },
+    {
+      "kind": "buffer",
+      "resourceId": "params",
+      "byteLength": 16,
+      "usage": [
+        "uniform",
+        "copy-dst"
+      ],
+      "initialData": {
+        "path": "data/params.bin",
+        "sha256": "07d510dcdf4606146c8a1eaec86737bcc8581ef61c9c145d3d82d1c3c34e8775"
+      }
+    },
+    {
+      "kind": "buffer",
+      "resourceId": "readback-ready-queues",
+      "byteLength": 32,
+      "usage": [
+        "map-read",
+        "copy-dst"
+      ],
+      "initialData": null
+    },
+    {
+      "kind": "buffer",
+      "resourceId": "readback-job-state",
+      "byteLength": 16,
+      "usage": [
+        "map-read",
+        "copy-dst"
+      ],
+      "initialData": null
+    },
+    {
+      "kind": "buffer",
+      "resourceId": "readback-output-job",
+      "byteLength": 48,
+      "usage": [
+        "map-read",
+        "copy-dst"
+      ],
+      "initialData": null
+    },
+    {
+      "kind": "buffer",
+      "resourceId": "readback-output-payload",
+      "byteLength": 8,
+      "usage": [
+        "map-read",
+        "copy-dst"
+      ],
+      "initialData": null
+    },
+    {
+      "kind": "buffer",
+      "resourceId": "readback-enqueue-status",
+      "byteLength": 4,
+      "usage": [
+        "map-read",
+        "copy-dst"
+      ],
+      "initialData": null
+    },
+    {
+      "kind": "buffer",
+      "resourceId": "readback-dequeue-status",
+      "byteLength": 4,
+      "usage": [
+        "map-read",
+        "copy-dst"
+      ],
+      "initialData": null
+    }
+  ],
+  "bindGroups": [
+    {
+      "bindGroupId": "dag.enqueue.group0",
+      "group": 0,
+      "entries": [
+        {
+          "binding": 0,
+          "resource": {
+            "kind": "buffer",
+            "resourceId": "ready-queues",
+            "offset": 0,
+            "size": 32
+          }
+        },
+        {
+          "binding": 1,
+          "resource": {
+            "kind": "buffer",
+            "resourceId": "ready-slots",
+            "offset": 0,
+            "size": 128
+          }
+        },
+        {
+          "binding": 2,
+          "resource": {
+            "kind": "buffer",
+            "resourceId": "job-nodes",
+            "offset": 0,
+            "size": 32
+          }
+        },
+        {
+          "binding": 3,
+          "resource": {
+            "kind": "buffer",
+            "resourceId": "job-states",
+            "offset": 0,
+            "size": 16
+          }
+        },
+        {
+          "binding": 8,
+          "resource": {
+            "kind": "buffer",
+            "resourceId": "enqueue-status",
+            "offset": 0,
+            "size": 4
+          }
+        },
+        {
+          "binding": 9,
+          "resource": {
+            "kind": "buffer",
+            "resourceId": "params",
+            "offset": 0,
+            "size": 16
+          }
+        }
+      ]
+    },
+    {
+      "bindGroupId": "dag.dequeue.group0",
+      "group": 0,
+      "entries": [
+        {
+          "binding": 0,
+          "resource": {
+            "kind": "buffer",
+            "resourceId": "ready-queues",
+            "offset": 0,
+            "size": 32
+          }
+        },
+        {
+          "binding": 1,
+          "resource": {
+            "kind": "buffer",
+            "resourceId": "ready-slots",
+            "offset": 0,
+            "size": 128
+          }
+        },
+        {
+          "binding": 2,
+          "resource": {
+            "kind": "buffer",
+            "resourceId": "job-nodes",
+            "offset": 0,
+            "size": 32
+          }
+        },
+        {
+          "binding": 5,
+          "resource": {
+            "kind": "buffer",
+            "resourceId": "output-jobs",
+            "offset": 0,
+            "size": 48
+          }
+        },
+        {
+          "binding": 6,
+          "resource": {
+            "kind": "buffer",
+            "resourceId": "input-payloads",
+            "offset": 0,
+            "size": 8
+          }
+        },
+        {
+          "binding": 7,
+          "resource": {
+            "kind": "buffer",
+            "resourceId": "output-payloads",
+            "offset": 0,
+            "size": 8
+          }
+        },
+        {
+          "binding": 8,
+          "resource": {
+            "kind": "buffer",
+            "resourceId": "dequeue-status",
+            "offset": 0,
+            "size": 4
+          }
+        },
+        {
+          "binding": 9,
+          "resource": {
+            "kind": "buffer",
+            "resourceId": "params",
+            "offset": 0,
+            "size": 16
+          }
+        }
+      ]
+    }
+  ],
+  "commands": [
+    {
+      "kind": "dispatch",
+      "pipelineId": "dag.enqueue",
+      "bindGroupIds": [
+        "dag.enqueue.group0"
+      ],
+      "workgroups": [
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "kind": "dispatch",
+      "pipelineId": "dag.dequeue",
+      "bindGroupIds": [
+        "dag.dequeue.group0"
+      ],
+      "workgroups": [
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "kind": "copy-buffer",
+      "source": "ready-queues",
+      "destination": "readback-ready-queues",
+      "byteLength": 32
+    },
+    {
+      "kind": "copy-buffer",
+      "source": "job-states",
+      "destination": "readback-job-state",
+      "byteLength": 16
+    },
+    {
+      "kind": "copy-buffer",
+      "source": "output-jobs",
+      "destination": "readback-output-job",
+      "byteLength": 48
+    },
+    {
+      "kind": "copy-buffer",
+      "source": "output-payloads",
+      "destination": "readback-output-payload",
+      "byteLength": 8
+    },
+    {
+      "kind": "copy-buffer",
+      "source": "enqueue-status",
+      "destination": "readback-enqueue-status",
+      "byteLength": 4
+    },
+    {
+      "kind": "copy-buffer",
+      "source": "dequeue-status",
+      "destination": "readback-dequeue-status",
+      "byteLength": 4
+    }
+  ],
+  "layoutProbes": [
+    {
+      "kind": "buffer-record",
+      "probeId": "dag.params-to-job-roundtrip",
+      "source": {
+        "moduleId": "dag-queue",
+        "group": 0,
+        "binding": 9,
+        "recordName": "Params"
+      },
+      "pipelineId": "dag.dequeue",
+      "commandIndex": 1,
+      "input": {
+        "resourceId": "params",
+        "byteOffset": 0,
+        "byteLength": 16,
+        "value": {
+          "job_count": 1,
+          "output_stride": 2,
+          "ready_queue_count": 2,
+          "max_priority": 1
+        }
+      },
+      "output": {
+        "readbackIndex": 2,
+        "recordName": "JobDesc",
+        "expectedValue": {
+          "node_index": 0,
+          "job_type": 11,
+          "priority": 1,
+          "payload_offset": 0,
+          "payload_words": 2,
+          "padding": [
+            0,
+            0,
+            0
+          ]
+        }
+      }
+    }
+  ],
+  "readbacks": [
+    {
+      "resourceId": "readback-ready-queues",
+      "byteOffset": 0,
+      "byteLength": 32,
+      "expectedSha256": "73102aa901f2829af05cc7d6b2f2c304d0cbaa0e02566cfcc60d7c1dbe69f2e9"
+    },
+    {
+      "resourceId": "readback-job-state",
+      "byteOffset": 0,
+      "byteLength": 16,
+      "expectedSha256": "992c30aaa46eff451038a19d0e1c6d6d1f41e27453adf66bfd84057dca8c6051"
+    },
+    {
+      "resourceId": "readback-output-job",
+      "byteOffset": 0,
+      "byteLength": 48,
+      "expectedSha256": "23aa7897a59cc911d2f3c8de806aa4728e22736c823912322a008f765eede9af"
+    },
+    {
+      "resourceId": "readback-output-payload",
+      "byteOffset": 0,
+      "byteLength": 8,
+      "expectedSha256": "761a15cfb3b79a6c7bb2f74c32851ef6c2f5a7b3176a31586d24c8a5e32385aa"
+    },
+    {
+      "resourceId": "readback-enqueue-status",
+      "byteOffset": 0,
+      "byteLength": 4,
+      "expectedSha256": "67abdd721024f0ff4e0b3f4c2fc13bc5bad42d0b7851d456d88d203d15aaa450"
+    },
+    {
+      "resourceId": "readback-dequeue-status",
+      "byteOffset": 0,
+      "byteLength": 4,
+      "expectedSha256": "67abdd721024f0ff4e0b3f4c2fc13bc5bad42d0b7851d456d88d203d15aaa450"
+    }
+  ],
+  "bounds": {
+    "maxBufferBytes": 412,
+    "maxTextureTexels": 1,
+    "maxCommands": 8,
+    "timeoutMs": 30000
+  }
+}

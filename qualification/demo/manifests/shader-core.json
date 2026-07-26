@@ -1,0 +1,329 @@
+{
+  "contractVersion": "1.0.0",
+  "shaderId": "gpu-lock-free-queue.demo",
+  "version": "1.0.0",
+  "modules": [
+    {
+      "moduleId": "demo-queue",
+      "uri": "https://assets.plasius.co.uk/shaders/gpu-lock-free-queue.demo/1.0.0/queue.wgsl",
+      "byteLength": 4757,
+      "sha256": "495727b961bf423493e0075a9bb9fca6af70797b416cc07bc4db2633c4236f10",
+      "contentType": "text/wgsl; charset=utf-8"
+    }
+  ],
+  "gpuInterface": {
+    "interfaceId": "gpu-lock-free-queue.demo",
+    "interfaceVersion": "1.0.0",
+    "manifestUri": "https://assets.plasius.co.uk/gpu-interfaces/gpu-lock-free-queue.demo/1.0.0/manifest.json",
+    "manifestSha256": "2bb7ee3dbac77513a70b7f61eff53a6679aed95842702f7644578f465b3ffe0b",
+    "interfaceAbiHash": "73d49ceaa9f15e8dc18425e155188dc820970096ab99675758f0eb87e9a417f7",
+    "modelAbiHash": "74ea7ca4d42ed425fa0b8c461541ddfd07a04773d9160abdc553213e2f161b92"
+  },
+  "pipelines": [
+    {
+      "kind": "compute",
+      "pipelineId": "demo.enqueue",
+      "layout": {
+        "bindGroups": [
+          {
+            "group": 0,
+            "entries": [
+              {
+                "group": 0,
+                "binding": 0,
+                "resource": {
+                  "kind": "buffer",
+                  "addressSpace": "storage",
+                  "access": "read_write",
+                  "recordName": "Queue",
+                  "minimumBindingSize": 16
+                },
+                "visibility": [
+                  "compute"
+                ]
+              },
+              {
+                "group": 0,
+                "binding": 1,
+                "resource": {
+                  "kind": "buffer",
+                  "addressSpace": "storage",
+                  "access": "read_write",
+                  "recordName": null,
+                  "minimumBindingSize": 16
+                },
+                "visibility": [
+                  "compute"
+                ]
+              },
+              {
+                "group": 0,
+                "binding": 2,
+                "resource": {
+                  "kind": "buffer",
+                  "addressSpace": "storage",
+                  "access": "read",
+                  "recordName": null,
+                  "minimumBindingSize": 16
+                },
+                "visibility": [
+                  "compute"
+                ]
+              },
+              {
+                "group": 0,
+                "binding": 4,
+                "resource": {
+                  "kind": "buffer",
+                  "addressSpace": "storage",
+                  "access": "read",
+                  "recordName": null,
+                  "minimumBindingSize": 4
+                },
+                "visibility": [
+                  "compute"
+                ]
+              },
+              {
+                "group": 0,
+                "binding": 6,
+                "resource": {
+                  "kind": "buffer",
+                  "addressSpace": "storage",
+                  "access": "read_write",
+                  "recordName": null,
+                  "minimumBindingSize": 4
+                },
+                "visibility": [
+                  "compute"
+                ]
+              },
+              {
+                "group": 0,
+                "binding": 7,
+                "resource": {
+                  "kind": "buffer",
+                  "addressSpace": "uniform",
+                  "access": "read",
+                  "recordName": "Params",
+                  "minimumBindingSize": 16
+                },
+                "visibility": [
+                  "compute"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "compute": {
+        "moduleId": "demo-queue",
+        "entryPoint": "enqueue_main",
+        "constants": {}
+      }
+    },
+    {
+      "kind": "compute",
+      "pipelineId": "demo.dequeue",
+      "layout": {
+        "bindGroups": [
+          {
+            "group": 0,
+            "entries": [
+              {
+                "group": 0,
+                "binding": 0,
+                "resource": {
+                  "kind": "buffer",
+                  "addressSpace": "storage",
+                  "access": "read_write",
+                  "recordName": "Queue",
+                  "minimumBindingSize": 16
+                },
+                "visibility": [
+                  "compute"
+                ]
+              },
+              {
+                "group": 0,
+                "binding": 1,
+                "resource": {
+                  "kind": "buffer",
+                  "addressSpace": "storage",
+                  "access": "read_write",
+                  "recordName": null,
+                  "minimumBindingSize": 16
+                },
+                "visibility": [
+                  "compute"
+                ]
+              },
+              {
+                "group": 0,
+                "binding": 3,
+                "resource": {
+                  "kind": "buffer",
+                  "addressSpace": "storage",
+                  "access": "read_write",
+                  "recordName": null,
+                  "minimumBindingSize": 16
+                },
+                "visibility": [
+                  "compute"
+                ]
+              },
+              {
+                "group": 0,
+                "binding": 4,
+                "resource": {
+                  "kind": "buffer",
+                  "addressSpace": "storage",
+                  "access": "read",
+                  "recordName": null,
+                  "minimumBindingSize": 4
+                },
+                "visibility": [
+                  "compute"
+                ]
+              },
+              {
+                "group": 0,
+                "binding": 5,
+                "resource": {
+                  "kind": "buffer",
+                  "addressSpace": "storage",
+                  "access": "read_write",
+                  "recordName": null,
+                  "minimumBindingSize": 4
+                },
+                "visibility": [
+                  "compute"
+                ]
+              },
+              {
+                "group": 0,
+                "binding": 6,
+                "resource": {
+                  "kind": "buffer",
+                  "addressSpace": "storage",
+                  "access": "read_write",
+                  "recordName": null,
+                  "minimumBindingSize": 4
+                },
+                "visibility": [
+                  "compute"
+                ]
+              },
+              {
+                "group": 0,
+                "binding": 7,
+                "resource": {
+                  "kind": "buffer",
+                  "addressSpace": "uniform",
+                  "access": "read",
+                  "recordName": "Params",
+                  "minimumBindingSize": 16
+                },
+                "visibility": [
+                  "compute"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "compute": {
+        "moduleId": "demo-queue",
+        "entryPoint": "dequeue_main",
+        "constants": {}
+      }
+    }
+  ],
+  "renderRoles": [
+    {
+      "role": "post-processing",
+      "pipelineIds": [
+        "demo.enqueue",
+        "demo.dequeue"
+      ]
+    }
+  ],
+  "compatibleModelInterfaces": [
+    {
+      "interfaceId": "gpu-lock-free-queue.demo",
+      "interfaceVersion": "1.0.0",
+      "manifestSha256": "2bb7ee3dbac77513a70b7f61eff53a6679aed95842702f7644578f465b3ffe0b",
+      "interfaceAbiHash": "73d49ceaa9f15e8dc18425e155188dc820970096ab99675758f0eb87e9a417f7",
+      "modelAbiHash": "74ea7ca4d42ed425fa0b8c461541ddfd07a04773d9160abdc553213e2f161b92"
+    }
+  ],
+  "requirements": {
+    "semantics": [
+      "queue.header",
+      "queue.job-type",
+      "queue.params",
+      "queue.payload-offset",
+      "queue.payload-words"
+    ],
+    "features": [],
+    "limits": [
+      {
+        "name": "maxBindGroups",
+        "comparator": "at-least",
+        "value": 1
+      },
+      {
+        "name": "maxBindingsPerBindGroup",
+        "comparator": "at-least",
+        "value": 8
+      },
+      {
+        "name": "maxBufferSize",
+        "comparator": "at-least",
+        "value": 64
+      },
+      {
+        "name": "maxComputeInvocationsPerWorkgroup",
+        "comparator": "at-least",
+        "value": 64
+      },
+      {
+        "name": "maxComputeWorkgroupSizeX",
+        "comparator": "at-least",
+        "value": 64
+      },
+      {
+        "name": "maxComputeWorkgroupSizeY",
+        "comparator": "at-least",
+        "value": 1
+      },
+      {
+        "name": "maxComputeWorkgroupSizeZ",
+        "comparator": "at-least",
+        "value": 1
+      },
+      {
+        "name": "maxStorageBufferBindingSize",
+        "comparator": "at-least",
+        "value": 64
+      },
+      {
+        "name": "maxStorageBuffersPerShaderStage",
+        "comparator": "at-least",
+        "value": 6
+      },
+      {
+        "name": "maxUniformBufferBindingSize",
+        "comparator": "at-least",
+        "value": 16
+      },
+      {
+        "name": "maxUniformBuffersPerShaderStage",
+        "comparator": "at-least",
+        "value": 1
+      }
+    ],
+    "formats": []
+  },
+  "shaderAbiHash": "9920c10520a79f3d8b7dfd58f163ab6ab5a17b005c90b9d00b7a6b08a69a96a8"
+}

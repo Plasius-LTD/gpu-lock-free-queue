@@ -8,8 +8,8 @@ struct ReadyQueue {
 struct ReadySlot {
   seq: atomic<u32>,
   node_index: u32,
-  _pad0: u32,
-  _pad1: u32,
+  padding0: u32,
+  padding1: u32,
 };
 
 struct JobNode {
@@ -26,7 +26,7 @@ struct JobNode {
 struct JobState {
   unresolved: atomic<u32>,
   state: atomic<u32>,
-  _pad: vec2<u32>,
+  padding: vec2<u32>,
 };
 
 struct JobDesc {
@@ -35,7 +35,7 @@ struct JobDesc {
   priority: u32,
   payload_offset: u32,
   payload_words: u32,
-  _pad: vec3<u32>,
+  padding: vec3<u32>,
 };
 
 struct Params {
@@ -175,7 +175,7 @@ fn dequeue_ready(output_index: u32) -> u32 {
           output_jobs[output_index].priority = node.priority;
           output_jobs[output_index].payload_offset = node.payload_offset;
           output_jobs[output_index].payload_words = node.payload_words;
-          output_jobs[output_index]._pad = vec3<u32>(0u, 0u, 0u);
+          output_jobs[output_index].padding = vec3<u32>(0u, 0u, 0u);
           atomicStore(&ready_slots[slot_index].seq, h + queue.capacity);
           return 1u;
         }

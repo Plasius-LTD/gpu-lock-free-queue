@@ -113,20 +113,47 @@ contract instead of a package-local 2D validation surface.
 ## Build Outputs
 
 `npm run build` emits `dist/index.js`, `dist/index.cjs`, `dist/queue.wgsl`, and
-`dist/dag-queue.wgsl`.
+`dist/dag-queue.wgsl`. It also copies the generated `qualification/` contracts
+into `dist/qualification/` so the reflected interfaces, fixtures, and exact
+shader digests travel with the immutable package artifact.
 
 ## Tests
-```
+
+```sh
 npm run test:e2e:setup
 npm run test:unit
 npm run test:coverage
+npm run shader:contracts
 npm run test:e2e
-REQUIRE_WEBGPU_VALIDATION=true npm run test:wgsl
+REQUIRE_WEBGPU_VALIDATION=true REQUIRE_SWIFTSHADER_VALIDATION=true npm run test:wgsl
 ```
 
 `npm run test:wgsl` is the blocking browser-runtime shader validation command
-used by CI. It fails closed when the runner cannot expose the required WebGPU
-validation path.
+used by CI. It compiles `src/queue.wgsl`, `demo/queue.wgsl`, and
+`src/dag-queue.wgsl` through `GPUShaderModule.getCompilationInfo()`, creates
+their explicit pipeline and bind-group layouts, dispatches both entry points,
+and verifies bounded semantic readback. It fails closed when the runner cannot
+select SwiftShader or expose the required WebGPU validation path.
+
+`npm run shader:contracts` reflects final WGSL through
+`@plasius/gpu-shader` and rejects stale generated files, undeclared entry
+points, incomplete fixtures, or any orphan `.wgsl` file under `src/` or
+`demo/`. WGSL is the source of truth for record fields, offsets, alignment,
+bindings, and ABI hashes; those values are not maintained in sidecar metadata.
+
+Promotion additionally requires complete evidence for every cell in
+`qualification/stable-webgpu-matrix.json`:
+
+```sh
+npm run shader:evidence -- \
+  --flat /secure/evidence/flat.json \
+  --demo /secure/evidence/demo.json \
+  --dag /secure/evidence/dag.json
+```
+
+Missing files, matrix cells, skips, timeouts, device loss, stale hashes, or
+non-passing results reject the evidence. Evidence files are produced by the
+qualified physical runners and are not checked into this repository.
 
 ## Development Checks
 
@@ -134,6 +161,7 @@ validation path.
 npm run lint
 npm run typecheck
 npm run test:coverage
+npm run shader:contracts
 npm run build
 npm run pack:check
 ```
@@ -142,15 +170,30 @@ npm run pack:check
 - `demo/index.html`: Loads the demo.
 - `demo/main.js`: Shared 3D harbor validation scene driven by DAG queue roots,
   priority lanes, and dependency joins.
+- `demo/queue.wgsl`: Legacy demo queue shader retained as its own qualified
+  compile unit.
 - `src/queue.wgsl`: Flat lock-free queue implementation.
 - `src/dag-queue.wgsl`: DAG-ready scheduler implementation.
 - `src/index.js`: Package entry point for loading scheduler assets and normalizing DAG graphs.
+- `qualification/`: Generated GPU interface manifests, compile units,
+  semantic fixtures, module digests, and stable-WebGPU matrix policy.
 
 ## Architecture Docs
 
 - `docs/adrs/adr-0004-multi-root-dag-ready-queues.md`
+- `docs/adrs/adr-0005-schema-driven-wgsl-qualification.md`
 - `docs/tdrs/tdr-0001-dag-scheduler-contract.md`
 - `docs/design/dag-scheduler-design.md`
 
 ## Payload shape
 Payloads are variable-length chunks stored in a caller-managed buffer. Each job specifies `job_type`, `payload_offset`, and `payload_words` in `input_jobs`; dequeue copies payloads from `input_payloads` into `output_payloads` using `output_stride` and mirrors the metadata into `output_jobs`. If you need `f32`, store `bitcast<u32>(value)` and reinterpret on the consumer side.
+
+<!-- BEGIN PLASIUS RELEASE INTEGRITY -->
+## Release integrity
+
+CI keeps the administrative contributor registry outside Git and npm package
+artifacts using exact, case-normalised path checks. CI runs on approved
+self-hosted runners. Release preparation and npm publication use GitHub-hosted
+runners with Node.js 24.18.0 LTS. CD remains disabled until the npm trusted
+publisher binding is verified and the legacy token fallback is removed.
+<!-- END PLASIUS RELEASE INTEGRITY -->

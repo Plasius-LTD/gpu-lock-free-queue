@@ -1,0 +1,457 @@
+{
+  "contractVersion": "1.0.0",
+  "fixtureId": "queue.flat.semantic.v1",
+  "resources": [
+    {
+      "kind": "buffer",
+      "resourceId": "queue",
+      "byteLength": 16,
+      "usage": [
+        "storage",
+        "copy-src",
+        "copy-dst"
+      ],
+      "initialData": {
+        "path": "data/queue.bin",
+        "sha256": "e040ccce073bce45d0037b29266fd5d851909a195713787444b5a9a979821a15"
+      }
+    },
+    {
+      "kind": "buffer",
+      "resourceId": "slots",
+      "byteLength": 64,
+      "usage": [
+        "storage",
+        "copy-dst"
+      ],
+      "initialData": {
+        "path": "data/slots.bin",
+        "sha256": "af62b25bde83479c9c0ce96a9515f94cd058d99dd8a4d33092c69698302e6a62"
+      }
+    },
+    {
+      "kind": "buffer",
+      "resourceId": "input-jobs",
+      "byteLength": 16,
+      "usage": [
+        "storage",
+        "copy-dst"
+      ],
+      "initialData": {
+        "path": "data/input-jobs.bin",
+        "sha256": "95d1023d4e8062d2bb7fd0ffb61201685d9fb80747355e04e8a269a725ab718d"
+      }
+    },
+    {
+      "kind": "buffer",
+      "resourceId": "output-jobs",
+      "byteLength": 16,
+      "usage": [
+        "storage",
+        "copy-src"
+      ],
+      "initialData": null
+    },
+    {
+      "kind": "buffer",
+      "resourceId": "input-payloads",
+      "byteLength": 8,
+      "usage": [
+        "storage",
+        "copy-dst"
+      ],
+      "initialData": {
+        "path": "data/input-payloads.bin",
+        "sha256": "eb10c386a8900a09d42af282ce6efa68e47e2448522aa89508295d1efcdd19ac"
+      }
+    },
+    {
+      "kind": "buffer",
+      "resourceId": "output-payloads",
+      "byteLength": 8,
+      "usage": [
+        "storage",
+        "copy-src"
+      ],
+      "initialData": null
+    },
+    {
+      "kind": "buffer",
+      "resourceId": "enqueue-status",
+      "byteLength": 4,
+      "usage": [
+        "storage",
+        "copy-src"
+      ],
+      "initialData": null
+    },
+    {
+      "kind": "buffer",
+      "resourceId": "dequeue-status",
+      "byteLength": 4,
+      "usage": [
+        "storage",
+        "copy-src"
+      ],
+      "initialData": null
+    },
+    {
+      "kind": "buffer",
+      "resourceId": "params",
+      "byteLength": 16,
+      "usage": [
+        "uniform",
+        "copy-dst"
+      ],
+      "initialData": {
+        "path": "data/params.bin",
+        "sha256": "1eb80f1254d5a03b177298a9b5ca0f21692646877d46f5ae90752254239c2128"
+      }
+    },
+    {
+      "kind": "buffer",
+      "resourceId": "readback-queue",
+      "byteLength": 16,
+      "usage": [
+        "map-read",
+        "copy-dst"
+      ],
+      "initialData": null
+    },
+    {
+      "kind": "buffer",
+      "resourceId": "readback-output-job",
+      "byteLength": 16,
+      "usage": [
+        "map-read",
+        "copy-dst"
+      ],
+      "initialData": null
+    },
+    {
+      "kind": "buffer",
+      "resourceId": "readback-output-payload",
+      "byteLength": 8,
+      "usage": [
+        "map-read",
+        "copy-dst"
+      ],
+      "initialData": null
+    },
+    {
+      "kind": "buffer",
+      "resourceId": "readback-enqueue-status",
+      "byteLength": 4,
+      "usage": [
+        "map-read",
+        "copy-dst"
+      ],
+      "initialData": null
+    },
+    {
+      "kind": "buffer",
+      "resourceId": "readback-dequeue-status",
+      "byteLength": 4,
+      "usage": [
+        "map-read",
+        "copy-dst"
+      ],
+      "initialData": null
+    }
+  ],
+  "bindGroups": [
+    {
+      "bindGroupId": "flat.enqueue.group0",
+      "group": 0,
+      "entries": [
+        {
+          "binding": 0,
+          "resource": {
+            "kind": "buffer",
+            "resourceId": "queue",
+            "offset": 0,
+            "size": 16
+          }
+        },
+        {
+          "binding": 1,
+          "resource": {
+            "kind": "buffer",
+            "resourceId": "slots",
+            "offset": 0,
+            "size": 64
+          }
+        },
+        {
+          "binding": 2,
+          "resource": {
+            "kind": "buffer",
+            "resourceId": "input-jobs",
+            "offset": 0,
+            "size": 16
+          }
+        },
+        {
+          "binding": 4,
+          "resource": {
+            "kind": "buffer",
+            "resourceId": "input-payloads",
+            "offset": 0,
+            "size": 8
+          }
+        },
+        {
+          "binding": 6,
+          "resource": {
+            "kind": "buffer",
+            "resourceId": "enqueue-status",
+            "offset": 0,
+            "size": 4
+          }
+        },
+        {
+          "binding": 7,
+          "resource": {
+            "kind": "buffer",
+            "resourceId": "params",
+            "offset": 0,
+            "size": 16
+          }
+        }
+      ]
+    },
+    {
+      "bindGroupId": "flat.dequeue.group0",
+      "group": 0,
+      "entries": [
+        {
+          "binding": 0,
+          "resource": {
+            "kind": "buffer",
+            "resourceId": "queue",
+            "offset": 0,
+            "size": 16
+          }
+        },
+        {
+          "binding": 1,
+          "resource": {
+            "kind": "buffer",
+            "resourceId": "slots",
+            "offset": 0,
+            "size": 64
+          }
+        },
+        {
+          "binding": 3,
+          "resource": {
+            "kind": "buffer",
+            "resourceId": "output-jobs",
+            "offset": 0,
+            "size": 16
+          }
+        },
+        {
+          "binding": 4,
+          "resource": {
+            "kind": "buffer",
+            "resourceId": "input-payloads",
+            "offset": 0,
+            "size": 8
+          }
+        },
+        {
+          "binding": 5,
+          "resource": {
+            "kind": "buffer",
+            "resourceId": "output-payloads",
+            "offset": 0,
+            "size": 8
+          }
+        },
+        {
+          "binding": 6,
+          "resource": {
+            "kind": "buffer",
+            "resourceId": "dequeue-status",
+            "offset": 0,
+            "size": 4
+          }
+        },
+        {
+          "binding": 7,
+          "resource": {
+            "kind": "buffer",
+            "resourceId": "params",
+            "offset": 0,
+            "size": 16
+          }
+        }
+      ]
+    }
+  ],
+  "commands": [
+    {
+      "kind": "dispatch",
+      "pipelineId": "flat.enqueue",
+      "bindGroupIds": [
+        "flat.enqueue.group0"
+      ],
+      "workgroups": [
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "kind": "dispatch",
+      "pipelineId": "flat.dequeue",
+      "bindGroupIds": [
+        "flat.dequeue.group0"
+      ],
+      "workgroups": [
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "kind": "copy-buffer",
+      "source": "queue",
+      "destination": "readback-queue",
+      "byteLength": 16
+    },
+    {
+      "kind": "copy-buffer",
+      "source": "output-jobs",
+      "destination": "readback-output-job",
+      "byteLength": 16
+    },
+    {
+      "kind": "copy-buffer",
+      "source": "output-payloads",
+      "destination": "readback-output-payload",
+      "byteLength": 8
+    },
+    {
+      "kind": "copy-buffer",
+      "source": "enqueue-status",
+      "destination": "readback-enqueue-status",
+      "byteLength": 4
+    },
+    {
+      "kind": "copy-buffer",
+      "source": "dequeue-status",
+      "destination": "readback-dequeue-status",
+      "byteLength": 4
+    }
+  ],
+  "layoutProbes": [
+    {
+      "kind": "buffer-record",
+      "probeId": "flat.queue-header-roundtrip",
+      "source": {
+        "moduleId": "flat-queue",
+        "group": 0,
+        "binding": 0,
+        "recordName": "Queue"
+      },
+      "pipelineId": "flat.enqueue",
+      "commandIndex": 0,
+      "input": {
+        "resourceId": "queue",
+        "byteOffset": 0,
+        "byteLength": 16,
+        "value": {
+          "head": 0,
+          "tail": 0,
+          "capacity": 4,
+          "mask": 3
+        }
+      },
+      "output": {
+        "readbackIndex": 0,
+        "recordName": "Queue",
+        "expectedValue": {
+          "head": 1,
+          "tail": 1,
+          "capacity": 4,
+          "mask": 3
+        }
+      }
+    },
+    {
+      "kind": "buffer-record",
+      "probeId": "flat.params-to-job-roundtrip",
+      "source": {
+        "moduleId": "flat-queue",
+        "group": 0,
+        "binding": 7,
+        "recordName": "Params"
+      },
+      "pipelineId": "flat.dequeue",
+      "commandIndex": 1,
+      "input": {
+        "resourceId": "params",
+        "byteOffset": 0,
+        "byteLength": 16,
+        "value": {
+          "job_count": 1,
+          "output_stride": 2,
+          "padding": [
+            0,
+            0
+          ]
+        }
+      },
+      "output": {
+        "readbackIndex": 1,
+        "recordName": "JobMeta",
+        "expectedValue": {
+          "job_type": 7,
+          "payload_offset": 0,
+          "payload_words": 2,
+          "padding": 0
+        }
+      }
+    }
+  ],
+  "readbacks": [
+    {
+      "resourceId": "readback-queue",
+      "byteOffset": 0,
+      "byteLength": 16,
+      "expectedSha256": "1a989b311416e7a234a813ebbef525f86f9548c11d7c94da54a47e2d760bfa0e"
+    },
+    {
+      "resourceId": "readback-output-job",
+      "byteOffset": 0,
+      "byteLength": 16,
+      "expectedSha256": "95d1023d4e8062d2bb7fd0ffb61201685d9fb80747355e04e8a269a725ab718d"
+    },
+    {
+      "resourceId": "readback-output-payload",
+      "byteOffset": 0,
+      "byteLength": 8,
+      "expectedSha256": "eb10c386a8900a09d42af282ce6efa68e47e2448522aa89508295d1efcdd19ac"
+    },
+    {
+      "resourceId": "readback-enqueue-status",
+      "byteOffset": 0,
+      "byteLength": 4,
+      "expectedSha256": "67abdd721024f0ff4e0b3f4c2fc13bc5bad42d0b7851d456d88d203d15aaa450"
+    },
+    {
+      "resourceId": "readback-dequeue-status",
+      "byteOffset": 0,
+      "byteLength": 4,
+      "expectedSha256": "67abdd721024f0ff4e0b3f4c2fc13bc5bad42d0b7851d456d88d203d15aaa450"
+    }
+  ],
+  "bounds": {
+    "maxBufferBytes": 200,
+    "maxTextureTexels": 1,
+    "maxCommands": 7,
+    "timeoutMs": 30000
+  }
+}
