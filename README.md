@@ -138,6 +138,19 @@ npm run build
 npm run pack:check
 ```
 
+## Release integrity
+
+`npm run pack:check` first inspects case-normalised source and Git-index path
+metadata, then validates the final npm dry-run inventory. Package tooling is
+not invoked while a prohibited administrative path is present.
+
+CI runs on the approved self-hosted labels and skips external-fork pull-request
+code. The parent `platform.public-artifact-integrity.enabled` feature flag
+controls staged restoration of public distribution but cannot bypass the
+mandatory integrity checks. Disabling the flag keeps distribution and package
+CD disabled; rollback never restores removed administrative material. See
+[`docs/design/public-artifact-integrity-recovery.md`](docs/design/public-artifact-integrity-recovery.md).
+
 ## Files
 - `demo/index.html`: Loads the demo.
 - `demo/main.js`: Shared 3D harbor validation scene driven by DAG queue roots,

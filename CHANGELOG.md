@@ -15,9 +15,14 @@ The format is based on **[Keep a Changelog](https://keepachangelog.com/en/1.1.0/
   - (placeholder)
 
 - **Fixed**
+  - Stopped self-hosted CI from requesting privileged Playwright host-package
+    installation on an already-qualified runner.
   - (placeholder)
 
 - **Security**
+  - Removed the administrative contributor-registry path from the current tree
+    and added fail-closed source, Git-index, and final npm-inventory admission
+    without reading prohibited contents.
   - (placeholder)
 
 ## [0.3.3] - 2026-07-01

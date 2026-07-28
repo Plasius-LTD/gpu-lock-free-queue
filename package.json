@@ -40,7 +40,7 @@
     "test:wgsl": "playwright test tests/e2e.spec.js --grep \"WGSL compiles when WebGPU is available\"",
     "test:coverage": "c8 --reporter=lcov --reporter=text node --test",
     "prepare": "npm run build",
-    "pack:check": "node scripts/verify-public-package.cjs",
+    "pack:check": "node scripts/verify-public-artifacts.cjs --package-dir . && node scripts/verify-public-package.cjs",
     "prepublishOnly": "npm run build && npm run pack:check"
   },
   "keywords": [
