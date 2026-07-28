@@ -36,3 +36,15 @@ test("CI runs the final public-artifact admission check", () => {
     /node \.\/scripts\/verify-public-artifacts\.cjs --package-dir \./u,
   );
 });
+
+test("coverage enforcement blocks delivery while Codecov telemetry is best effort", () => {
+  assert.match(workflow, /Enforce line coverage >= 80%/u);
+  assert.match(
+    workflow,
+    /name: Install Codecov CLI\n {8}continue-on-error: true/u,
+  );
+  assert.match(
+    workflow,
+    /name: Upload coverage to Codecov\n {8}continue-on-error: true/u,
+  );
+});

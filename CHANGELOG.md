@@ -17,6 +17,8 @@ The format is based on **[Keep a Changelog](https://keepachangelog.com/en/1.1.0/
 - **Fixed**
   - Stopped self-hosted CI from requesting privileged Playwright host-package
     installation on an already-qualified runner.
+  - Kept enforced local coverage blocking while making unavailable Codecov
+    telemetry non-blocking on runners without system Python package tooling.
   - (placeholder)
 
 - **Security**

@@ -98,9 +98,11 @@ jobs:
           }
 
       - name: Install Codecov CLI
+        continue-on-error: true
         run: python3 -m pip install --upgrade codecov-cli
 
       - name: Upload coverage to Codecov
+        continue-on-error: true
         env:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
         run: |
