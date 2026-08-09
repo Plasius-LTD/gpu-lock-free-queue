@@ -4,3 +4,4 @@
 - [ADR-0002: Dual ESM and CJS Entrypoints](./adr-0002:%20Dual%20ESM%20and%20CJS%20Entrypoints.md)
 - [ADR-0003: Payload Handles and Job Types](./adr-0003:%20Variable%20Payload%20Arena%20and%20Job%20Types.md)
 - [ADR-0004: Multi-Root DAG-Ready Queues](./adr-0004-multi-root-dag-ready-queues.md)
+- [ADR-0005: Hosted OIDC Package Publication](./adr-0005-hosted-oidc-package-publication.md)

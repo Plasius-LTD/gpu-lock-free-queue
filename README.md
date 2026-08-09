@@ -167,3 +167,14 @@ CD disabled; rollback never restores removed administrative material. See
 
 ## Payload shape
 Payloads are variable-length chunks stored in a caller-managed buffer. Each job specifies `job_type`, `payload_offset`, and `payload_words` in `input_jobs`; dequeue copies payloads from `input_payloads` into `output_payloads` using `output_stride` and mirrors the metadata into `output_jobs`. If you need `f32`, store `bitcast<u32>(value)` and reinterpret on the consumer side.
+<!-- BEGIN PLASIUS RELEASE INTEGRITY -->
+## Release integrity
+
+Production package publication runs only from `.github/workflows/cd.yml` on
+protected `main`. The job verifies that the prepared commit is still the
+current main commit and has an exact successful `ci.yml` push result before it
+mutates release state. npm publication runs on GitHub-hosted Node.js 24 with
+npm 11.5.1 or newer, uses the protected `production` environment and
+short-lived npm OIDC with provenance, and has no long-lived npm write-token
+fallback. Rollback disables CD; it never rewrites published package history.
+<!-- END PLASIUS RELEASE INTEGRITY -->
