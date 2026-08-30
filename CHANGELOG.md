@@ -27,6 +27,7 @@ The format is based on **[Keep a Changelog](https://keepachangelog.com/en/1.1.0/
   - (placeholder)
 
 - **Security**
+  - Pinned patched transitive npm dependencies to clear the current audit baseline.
   - Removed the administrative contributor-registry path from the current tree
     and added fail-closed source, Git-index, and final npm-inventory admission
     without reading prohibited contents.
