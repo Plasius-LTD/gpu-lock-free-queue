@@ -12,6 +12,9 @@ The format is based on **[Keep a Changelog](https://keepachangelog.com/en/1.1.0/
   - (placeholder)
 
 - **Changed**
+  - Isolated CI and public-artifact validation in a repository-scoped GPU
+    qualification runner group while retaining each job's explicit platform
+    labels.
   - Restored exact-main npm publication on a GitHub-hosted runner through
     short-lived OIDC, with an enforced Node/npm runtime and no long-lived
     write-token fallback.
@@ -20,6 +23,8 @@ The format is based on **[Keep a Changelog](https://keepachangelog.com/en/1.1.0/
   - (placeholder)
 
 - **Fixed**
+  - Disabled package-manager cache finalization and bounded the self-hosted
+    validation job so runner cleanup cannot block the release queue indefinitely.
   - Stopped self-hosted CI from requesting privileged Playwright host-package
     installation on an already-qualified runner.
   - Kept enforced local coverage blocking while making unavailable Codecov
