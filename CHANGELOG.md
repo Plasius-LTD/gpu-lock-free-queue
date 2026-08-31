@@ -21,6 +21,8 @@ The format is based on **[Keep a Changelog](https://keepachangelog.com/en/1.1.0/
   - (placeholder)
 
 - **Fixed**
+  - Disabled package-manager cache finalization and bounded the self-hosted
+    validation job so runner cleanup cannot block the release queue indefinitely.
   - Stopped self-hosted CI from requesting privileged Playwright host-package
     installation on an already-qualified runner.
   - Kept enforced local coverage blocking while making unavailable Codecov
