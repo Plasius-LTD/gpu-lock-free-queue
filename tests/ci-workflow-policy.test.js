@@ -10,9 +10,14 @@ const workflow = fs.readFileSync(
   "utf8",
 );
 
-test("CI uses explicit approved self-hosted labels without a hosted fallback", () => {
-  assert.match(workflow, /runs-on: \[self-hosted, Linux, X64, playwright\]/u);
-  assert.match(workflow, /runs-on: \[self-hosted, Linux, X64\]/u);
+test("CI uses the quarantined group with explicit self-hosted labels", () => {
+  const quarantinedGroupSelections = workflow.match(
+    /runs-on:\n {6}group: Public CI - Quarantined\n {6}labels:/gu,
+  );
+
+  assert.equal(quarantinedGroupSelections?.length, 2);
+  assert.match(workflow, /labels: \[self-hosted, Linux, X64, playwright\]/u);
+  assert.match(workflow, /labels: \[self-hosted, Linux, X64\]/u);
   assert.doesNotMatch(workflow, /runs-on:.*(?:fromJSON|vars\.)/u);
   assert.doesNotMatch(workflow, /runs-on:.*(?:ubuntu|windows|macos)-latest/u);
   assert.match(workflow, /npx playwright install chromium/u);

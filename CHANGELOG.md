@@ -12,6 +12,7 @@ The format is based on **[Keep a Changelog](https://keepachangelog.com/en/1.1.0/
   - (placeholder)
 
 - **Changed**
+  - Routed CI and public-artifact validation through the organisation's quarantined public runner group while retaining each job's explicit platform labels.
   - Restored exact-main npm publication on a GitHub-hosted runner through
     short-lived OIDC, with an enforced Node/npm runtime and no long-lived
     write-token fallback.
