@@ -8,9 +8,6 @@
 [![Security Policy](https://img.shields.io/badge/security%20policy-yes-orange.svg)](./SECURITY.md)
 [![Changelog](https://img.shields.io/badge/changelog-md-blue.svg)](./CHANGELOG.md)
 
-[![CI](https://github.com/Plasius-LTD/gpu-lock-free-queue/actions/workflows/ci.yml/badge.svg)](https://github.com/Plasius-LTD/gpu-lock-free-queue/actions/workflows/ci.yml)
-[![license](https://img.shields.io/npm/l/@plasius/gpu-lock-free-queue)](./LICENSE)
-
 A WebGPU lock-free queue package that now ships both a flat MPMC ring queue and
 a DAG-ready scheduler asset with dependency-aware ready lanes.
 
