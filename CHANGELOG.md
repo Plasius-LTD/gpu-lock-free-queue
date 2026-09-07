@@ -12,7 +12,8 @@ The format is based on **[Keep a Changelog](https://keepachangelog.com/en/1.1.0/
   - (placeholder)
 
 - **Changed**
-  - Isolated CI and public-artifact validation in a repository-scoped GPU
+  - Refreshed compatible @plasius/* lockfile resolutions to the latest published releases.
+ - Isolated CI and public-artifact validation in a repository-scoped GPU
     qualification runner group while retaining each job's explicit platform
     labels.
   - Restored exact-main npm publication on a GitHub-hosted runner through
