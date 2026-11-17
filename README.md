@@ -175,3 +175,18 @@ npm 11.5.1 or newer, uses the protected `production` environment and
 short-lived npm OIDC with provenance, and has no long-lived npm write-token
 fallback. Rollback disables CD; it never rewrites published package history.
 <!-- END PLASIUS RELEASE INTEGRITY -->
+
+## Automatic npm releases
+
+Run `.github/workflows/cd.yml` on `main` with `phase=prepare` and the intended
+version bump. The schema-template pipeline prepares release metadata through a
+pull request, waits for CI on that exact main commit, then publishes the sealed
+package through npm trusted publishing in the `production` environment.
+Normal privacy, audit, tests, coverage and artifact checks run automatically.
+No separate release-owner or dependency-coordination admission is required.
+
+`npm run privacy:check` checks repository path metadata. `npm run test:privacy`
+tests the policy and release contract. `npm run pack:check` checks the package
+against the reviewed inventory in `scripts/package-artifacts.json`; update that
+inventory deliberately when public package files change. Add real notes under
+`Unreleased`; only the release pipeline promotes them to a versioned section.

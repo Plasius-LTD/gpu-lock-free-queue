@@ -8,8 +8,9 @@ The format is based on **[Keep a Changelog](https://keepachangelog.com/en/1.1.0/
 
 ## [Unreleased]
 
-- **Added**
-  - (placeholder)
+### Fixed
+
+- Restore automatic schema-template npm publication and validate renewed trusted publishing with a sealed package inventory.
 
 - **Changed**
   - Refreshed compatible @plasius/* lockfile resolutions to the latest published releases.
@@ -21,7 +22,6 @@ The format is based on **[Keep a Changelog](https://keepachangelog.com/en/1.1.0/
     write-token fallback.
   - Refreshed the GPU shared-contract dependency to its currently published
     version so clean release installs remain reproducible.
-  - (placeholder)
 
 - **Fixed**
   - Disabled package-manager cache finalization and bounded the self-hosted
@@ -30,84 +30,64 @@ The format is based on **[Keep a Changelog](https://keepachangelog.com/en/1.1.0/
     installation on an already-qualified runner.
   - Kept enforced local coverage blocking while making unavailable Codecov
     telemetry non-blocking on runners without system Python package tooling.
-  - (placeholder)
 
 - **Security**
   - Pinned patched transitive npm dependencies to clear the current audit baseline.
   - Removed the administrative contributor-registry path from the current tree
     and added fail-closed source, Git-index, and final npm-inventory admission
     without reading prohibited contents.
-  - (placeholder)
 
 ## [0.3.3] - 2026-07-01
 
 - **Added**
-  - (placeholder)
 
 - **Changed**
   - Refreshed the published dependency baseline to `@plasius/gpu-shared@^1.0.2`, `@playwright/test@^1.61.1`, and `eslint@^10.6.0`.
 
 - **Fixed**
-  - (placeholder)
 
 - **Security**
-  - (placeholder)
 
 ## [0.3.2] - 2026-06-22
 
 - **Added**
-  - (placeholder)
 
 - **Changed**
-  - (placeholder)
 
 - **Fixed**
-  - (placeholder)
 
 - **Security**
-  - (placeholder)
 
 ## [0.3.1] - 2026-06-22
 
 - **Added**
-  - (placeholder)
 
 - **Changed**
-  - (placeholder)
 
 - **Fixed**
   - Made WGSL browser-runtime validation a CI-enforced gate so shader compilation can no longer pass only through a locally skipped Playwright path.
 
 - **Security**
-  - (placeholder)
 
 ## [0.2.18] - 2026-05-13
 
 - **Added**
-  - (placeholder)
 
 - **Changed**
-  - (placeholder)
 
 - **Fixed**
-  - (placeholder)
 
 - **Security**
-  - (placeholder)
 
 ## [0.2.17] - 2026-05-13
 
 - **Added**
-  - (placeholder)
 
 - **Changed**
-  - (placeholder)
 
 - **Fixed**
-  - (placeholder)
 
 - **Security**
-  - (placeholder)
 
 ## [0.2.16] - 2026-04-02
 
@@ -124,21 +104,16 @@ The format is based on **[Keep a Changelog](https://keepachangelog.com/en/1.1.0/
     of an import-map-backed package import.
 
 - **Security**
-  - (placeholder)
 
 ## [0.2.15] - 2026-03-23
 
 - **Added**
-  - (placeholder)
 
 - **Changed**
-  - (placeholder)
 
 - **Fixed**
-  - (placeholder)
 
 - **Security**
-  - (placeholder)
 
 ## [0.2.14] - 2026-03-14
 
@@ -155,39 +130,30 @@ The format is based on **[Keep a Changelog](https://keepachangelog.com/en/1.1.0/
     the Codecov CLI.
 
 - **Fixed**
-  - (placeholder)
 
 - **Security**
-  - (placeholder)
 
 ## [0.2.13] - 2026-03-13
 
 - **Added**
-  - (placeholder)
 
 - **Changed**
-  - (placeholder)
 
 - **Fixed**
-  - (placeholder)
 
 - **Security**
-  - (placeholder)
 
 ## [0.2.13] - 2026-03-13
 
 - **Added**
-  - (placeholder)
 
 - **Changed**
   - Git-based installs now run `prepare` so built `dist/` assets exist when
     downstream packages pin the queue repo directly.
 
 - **Fixed**
-  - (placeholder)
 
 - **Security**
-  - (placeholder)
 
 ## [0.2.13] - 2026-03-13
 
@@ -203,80 +169,58 @@ The format is based on **[Keep a Changelog](https://keepachangelog.com/en/1.1.0/
     target flat and DAG scheduler assets through one lifecycle contract.
 
 - **Fixed**
-  - (placeholder)
 
 - **Security**
-  - (placeholder)
 
 ## [0.2.12] - 2026-03-04
 
 - **Added**
-  - (placeholder)
 
 - **Changed**
-  - (placeholder)
 
 - **Fixed**
-  - (placeholder)
 
 - **Security**
-  - (placeholder)
 
 ## [0.2.8] - 2026-03-01
 
 - **Added**
-  - (placeholder)
 
 - **Changed**
-  - (placeholder)
 
 - **Fixed**
-  - (placeholder)
 
 - **Security**
-  - (placeholder)
 
 ## [0.2.7] - 2026-03-01
 
 - **Added**
-  - (placeholder)
 
 - **Changed**
-  - (placeholder)
 
 - **Fixed**
-  - (placeholder)
 
 - **Security**
-  - (placeholder)
 
 ## [0.2.6] - 2026-03-01
 
 - **Added**
-  - (placeholder)
 
 - **Changed**
-  - (placeholder)
 
 - **Fixed**
-  - (placeholder)
 
 - **Security**
-  - (placeholder)
 
 ## [0.2.4] - 2026-03-01
 
 - **Added**
-  - (placeholder)
 
 - **Changed**
-  - (placeholder)
 
 - **Fixed**
-  - (placeholder)
 
 - **Security**
-  - (placeholder)
 
 ## [0.2.3] - 2026-03-01
 
@@ -295,58 +239,42 @@ The format is based on **[Keep a Changelog](https://keepachangelog.com/en/1.1.0/
 ## [0.2.2] - 2026-02-28
 
 - **Added**
-  - (placeholder)
 
 - **Changed**
-  - (placeholder)
 
 - **Fixed**
-  - (placeholder)
 
 - **Security**
-  - (placeholder)
 
 ## [0.2.2] - 2026-02-28
 
 - **Added**
-  - (placeholder)
 
 - **Changed**
-  - (placeholder)
 
 - **Fixed**
-  - (placeholder)
 
 - **Security**
-  - (placeholder)
 
 ## [0.2.2] - 2026-02-28
 
 - **Added**
-  - (placeholder)
 
 - **Changed**
-  - (placeholder)
 
 - **Fixed**
-  - (placeholder)
 
 - **Security**
-  - (placeholder)
 
 ## [0.2.2] - 2026-02-28
 
 - **Added**
-  - (placeholder)
 
 - **Changed**
-  - (placeholder)
 
 - **Fixed**
-  - (placeholder)
 
 - **Security**
-  - (placeholder)
 
 ## [0.2.1] - 2026-01-23
 
@@ -411,13 +339,10 @@ The format is based on **[Keep a Changelog](https://keepachangelog.com/en/1.1.0/
   - Initial release.
 
 - **Changed**
-  - (placeholder)
 
 - **Fixed**
-  - (placeholder)
 
 - **Security**
-  - (placeholder)
 [0.2.2]: https://github.com/Plasius-LTD/gpu-lock-free-queue/releases/tag/v0.2.2
 [0.2.3]: https://github.com/Plasius-LTD/gpu-lock-free-queue/releases/tag/v0.2.3
 [0.2.4]: https://github.com/Plasius-LTD/gpu-lock-free-queue/releases/tag/v0.2.4
