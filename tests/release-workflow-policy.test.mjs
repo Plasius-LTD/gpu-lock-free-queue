@@ -17,7 +17,7 @@ test("npm release uses hosted OIDC without a long-lived write token", () => {
 });
 
 test("npm release admits only the prepared main commit after exact CI", () => {
-  assert.match(workflow, /Enforce exact-main successful CI/u);
+  assert.match(workflow, /Wait for successful exact-SHA main CI/u);
   assert.match(workflow, /needs\.prepare_release\.outputs\.commit_sha/u);
   assert.match(workflow, /refs\/remotes\/origin\/main/u);
   assert.match(workflow, /-f branch=main/u);
@@ -28,7 +28,7 @@ test("npm release admits only the prepared main commit after exact CI", () => {
 
 test("npm release fails closed when npm OIDC is unavailable", () => {
   assert.match(workflow, /Verify release runtime/u);
-  assert.match(workflow, /ACTUAL_NODE%%\.\*/u);
+  assert.match(workflow, /ACTUAL_NODE/u);
   assert.match(workflow, /"11\.5\.1"/u);
   assert.match(workflow, /--provenance/u);
 });

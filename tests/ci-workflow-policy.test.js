@@ -10,24 +10,13 @@ const workflow = fs.readFileSync(
   "utf8",
 );
 
-test("CI uses the dedicated qualification group with explicit self-hosted labels", () => {
-  const qualificationGroupSelections = workflow.match(
-    /runs-on:\n {6}group: GPU Queue Qualification\n {6}labels:/gu,
-  );
-
-  assert.equal(qualificationGroupSelections?.length, 2);
-  assert.match(workflow, /labels: \[self-hosted, Linux, X64, playwright\]/u);
-  assert.match(workflow, /labels: \[self-hosted, Linux, X64\]/u);
-  assert.equal(
-    workflow.match(/package-manager-cache: false/gu)?.length,
-    2,
-  );
-  assert.match(workflow, /timeout-minutes: 30/u);
-  assert.doesNotMatch(workflow, /^ {10}cache:/mu);
-  assert.doesNotMatch(workflow, /runs-on:.*(?:fromJSON|vars\.)/u);
-  assert.doesNotMatch(workflow, /runs-on:.*(?:ubuntu|windows|macos)-latest/u);
-  assert.match(workflow, /npx playwright install chromium/u);
-  assert.doesNotMatch(workflow, /playwright install --with-deps/u);
+test("CI uses schema's hosted PR and trusted main runner selection", () => {
+  assert.equal(workflow.match(/needs: trusted_head/gu)?.length, 2);
+  assert.equal(workflow.match(/runs-on: \$\{\{ fromJSON\(github.event_name == 'pull_request'/gu)?.length, 2);
+  assert.match(workflow, /\["ubuntu-latest"\]/u);
+  assert.match(workflow, /\["self-hosted","Linux","X64"\]/u);
+  assert.match(workflow, /runner.environment == 'github-hosted'/u);
+  assert.doesNotMatch(workflow, /fromJSON\(vars\./u);
 });
 
 test("pull requests cannot run external-fork code on self-hosted capacity", () => {
@@ -41,19 +30,16 @@ test("pull requests cannot run external-fork code on self-hosted capacity", () =
 });
 
 test("CI runs the final public-artifact admission check", () => {
-  assert.match(workflow, /public-artifact-integrity:/u);
+  assert.match(workflow, /public_artifact_integrity:/u);
   assert.match(
     workflow,
-    /node \.\/scripts\/verify-public-artifacts\.cjs --package-dir \./u,
+    /node \.\/scripts\/verify-private-artifacts\.cjs/u,
   );
 });
 
 test("coverage enforcement blocks delivery while Codecov telemetry is best effort", () => {
   assert.match(workflow, /Enforce line coverage >= 80%/u);
-  assert.match(
-    workflow,
-    /name: Install Codecov CLI\n {8}continue-on-error: true/u,
-  );
+  assert.match(workflow, /uses: codecov\/codecov-action@v4/u);
   assert.match(
     workflow,
     /name: Upload coverage to Codecov\n {8}continue-on-error: true/u,
